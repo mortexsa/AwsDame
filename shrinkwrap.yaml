@@ -4,6 +4,7 @@ dependencies:
   consolidate: 0.15.1
   cookie-parser: 1.4.4
   express: 4.16.4
+  express-async-errors: 3.1.1
   express-session: 1.16.1
   mongodb: 3.2.3
   nunjucks: 3.2.0
@@ -425,6 +426,12 @@ packages:
     optional: true
     resolution:
       integrity: sha1-t3c14xXOMPa27/D4OwQVGiJEliI=
+  /express-async-errors/3.1.1:
+    dev: false
+    peerDependencies:
+      express: ^4.16.2
+    resolution:
+      integrity: sha512-h6aK1da4tpqWSbyCa3FxB/V6Ehd4EEB15zyQq9qe75OZBp0krinNKuH4rAY+S/U/2I36vdLAUFSjQJ+TFmODng==
   /express-session/1.16.1:
     dependencies:
       cookie: 0.3.1
@@ -1711,6 +1718,7 @@ specifiers:
   consolidate: ^0.15.1
   cookie-parser: ^1.4.4
   express: ^4.16.4
+  express-async-errors: ^3.1.1
   express-session: ^1.16.1
   mongodb: ^3.2.3
   nunjucks: ^3.2.0

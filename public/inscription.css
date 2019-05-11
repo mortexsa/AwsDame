@@ -1,0 +1,119 @@
+@font-face {
+    font-family: 'Raleway';
+    src: url(https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2FRaleway-ExtraLight.ttf?1557406520769);
+    font-weight: lighter;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Raleway';
+    src: url(https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2FRaleway-SemiBold.ttf?1557406613600);
+    font-weight: bold;
+    font-style: normal;
+}
+body{
+	background-image: url(https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fbackground.jpg?1557407085547);
+	font-family: "Raleway",Arial, sans-serif;
+	color: white;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	width: 100%;
+	height: 650px;
+	text-align: center;
+	margin: 0;
+}
+#photo img
+{
+	margin-top: 40px;
+	width: 230px;
+	height: 230px;
+	margin-bottom: -10px;
+}
+#titre_principal h2 {
+	font-size: 33px;
+}
+#titre_principal h4 {
+	font-size: 16px;
+	font-weight: lighter;
+	margin-top: -22px;
+	margin-bottom: 60px;
+}
+#affiche_erreur {
+	color: red;
+	background-color: rgba(0,0,0,0.4);
+	font-weight: bold;
+	border:2px solid red;
+	margin-top:-25px;
+	margin-bottom:-10px;
+	padding-bottom: 20px;
+	width: 540px;
+	height: 30px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.colone_remplire {
+	width: 520px;
+	height: 50px;
+	padding-left: 20px; 
+	font-size: 1em;
+}
+
+#submit {
+	width: 540px;
+	height: 50px;
+	background-color: rgba(0,0,0,0.3);
+	color: white;
+	font-size: 1em;
+	box-shadow: 0px 0px 7px 2px rgba(255,255,255,.8);
+	border: 2px solid white;
+}
+#submit:hover {
+	transition: .3s;
+	background-color: white;
+	color: #424242;
+}
+#pour_connexion{
+	background-color: rgba(0,0,0,0.5);
+	margin: auto;
+	width: 430px;
+	border-radius: 10px;
+}
+#pour_connexion a {
+	color: white;
+}
+
+@media all and (max-width: 768px) {
+	#photo img
+	{
+		margin-top: 80px;
+		width: 130px;
+		height: 130px;
+	}
+	#titre_principal h2 {
+		font-size: 26px;
+	}
+	#titre_principal h4 {
+		font-size: 12px;
+		margin-top: -11px;
+	}
+}
+@media all and (max-width: 665px) {
+	#colone_remplire {
+		width: 80%;
+	}
+	#submit {
+		width: 83.5%;
+	}
+	
+}
+footer p {
+	margin: auto;
+	text-align: center;
+	background-color: black;
+	font-family: sans-serif;
+	font-weight: lighter;
+	font-size: 0.8em;
+	padding: 15.5px;
+	align-content: center;
+	color: white;
+}
