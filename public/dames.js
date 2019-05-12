@@ -9,7 +9,7 @@ class Dames
     this.colonne = colonne;
     this.nbPion = 20;
     //le pion choisi par le joueur
-    this.pionCliquer = {"column":null,"row":null,"status": 0};
+    this.pionCliquer = {"column":null,"row":null,"status": 0,"obligatoire":false};
     // cet tableau à deux dimensions contient l'état du jeu:
     //   0: case vide
     //   1: pion du joueur 1
@@ -48,7 +48,7 @@ class Dames
       
       for(let j=0; j<this.colonne; j++)
       {
-        this.echiquier[i][j] = 0;
+        this.echiquier[i][j] = {"type":0 , "dame":false, "possible":0};
       }
     }
     this.initiJour1();
@@ -66,11 +66,11 @@ class Dames
       {
         if(i%2 === 0 && j%2 === 1)
         {
-          this.echiquier[i][j] = 2;
+          this.echiquier[i][j].type = 2;
         }
         else if(i%2 === 1 && j%2 === 0)
         {
-          this.echiquier[i][j] = 2;
+          this.echiquier[i][j].type = 2;
         }
       }
     }
@@ -83,14 +83,23 @@ class Dames
       {
         if(i%2 === 0 && j%2 === 1)
         {
-          this.echiquier[i][j] = 1;
+          this.echiquier[i][j].type = 1;
         }
         else if(i%2 === 1 && j%2 === 0)
         {
-          this.echiquier[i][j] = 1;
+          this.echiquier[i][j].type = 1;
         }
       }
     }
+  }
+  
+  initPossibilite()
+  {
+    for (let i = 0; i<this.ligne; i++) {
+      for (let j = 0; j < this.colonne; j++) {
+        this.echiquier[i][j].possible = 0;
+      }
+    }    
   }
   
   /* Affiche le plateau de jeu dans le DOM */
@@ -106,7 +115,7 @@ class Dames
         //console.log('colonne');
         let td = tr.appendChild(document.createElement('td'));
         let div = td.appendChild(document.createElement('div'));
-        let colour = this.echiquier[i][j];
+        let colour = this.echiquier[i][j].type;
         if (colour)
         {
           div.className = 'player' + colour;
@@ -121,7 +130,10 @@ class Dames
         {
           td.className = 'noir';
         }
-        if(this.pionCliquer.status === 1 && this.pionCliquer.row === i && this.pionCliquer.column == j) {
+        if(this.echiquier[i][j].possible === 1) {
+          td.style["background-color"] = "red";
+        }
+        if(this.pionCliquer.status === 1 && this.pionCliquer.row === i && this.pionCliquer.column === j) {
           td.style["background-color"] = "#919190";
         }
         div.dataset.column = j;
@@ -133,23 +145,98 @@ class Dames
   }
   
   play(column,row){
-    
-    if(this.echiquier[row][column] === 0 && this.pionCliquer.status === 1) {
-      let diffCordonneeY = row - this.pionCliquer.row;
-      let diffCordonneeX = column - this.pionCliquer.column;
-      if(Math.abs(diffCordonneeX) === 1 &&  ((diffCordonneeY === 1 && this.echiquier[this.pionCliquer.row][this.pionCliquer.column] === 2) || (diffCordonneeY === -1 && this.echiquier[this.pionCliquer.row][this.pionCliquer.column] === 1))) {
-        this.echiquier[row][column] = this.echiquier[this.pionCliquer.row][this.pionCliquer.column];
-        this.echiquier[this.pionCliquer.row][this.pionCliquer.column] = 0;
-        this.pionCliquer.status = 0;
-        this.pionCliquer.row = null;
-        this.pionCliquer.column = null;
-        this.tour = (this.tour % 2) + 1;
+    console.log(this.tour);
+    if(this.pionCliquer.status === 1 && this.echiquier[row][column].type === 0) {
+      if(!this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame){ 
+        if(!this.pionCliquer.obligatoire) {
+          this.deplacementSimplePion(column,row);
+        } else {
+          this.priseParPion(column,row);
+        }  
+      } else {
+        //Dame
       }
-    }
-    else if(this.tour == this.echiquier[row][column]) {
+    } else if(this.tour === this.echiquier[row][column].type && !this.pionCliquer.obligatoire) {
       this.pionCliquer.status = 1;
       this.pionCliquer.row = row;
       this.pionCliquer.column = column;
+      this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+    }
+  }
+  
+  priseParPion(column,row){
+    if(this.echiquier[row][column].possible === 1){
+      let diffCordonneeY = (row - this.pionCliquer.row)/2;
+      let diffCordonneeX = (column - this.pionCliquer.column)/2;
+      this.echiquier[this.pionCliquer.row+diffCordonneeY][this.pionCliquer.column+diffCordonneeX].type = 0;
+      this.echiquier[row][column].type = this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type;
+      this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type = 0;
+      this.pionCliquer.row = row;
+      this.pionCliquer.column = column;
+      this.initPossibilite();
+      this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+      if(!this.pionCliquer.obligatoire) {   
+        this.pionCliquer.status = 0;
+        this.pionCliquer.row = 0;
+        this.pionCliquer.column = 0;
+        this.tour = 3-this.tour;
+      }
+    }
+  }
+  
+  estPriseObligatoirePion(){
+    let compt = false;
+    if(this.pionCliquer.row+2 < this.ligne && this.pionCliquer.column+2 < this.colonne)
+    {
+      if(this.echiquier[this.pionCliquer.row+1][this.pionCliquer.column+1].type === (3-this.tour) &&
+      this.echiquier[this.pionCliquer.row+2][this.pionCliquer.column+2].type === 0)
+      {
+        this.echiquier[this.pionCliquer.row+2][this.pionCliquer.column+2].possible = 1;
+        compt = true;
+      }
+    }
+    if(this.pionCliquer.row-2 >= 0 && this.pionCliquer.column-2 >= 0)
+    {
+      if(this.echiquier[this.pionCliquer.row-1][this.pionCliquer.column-1].type === (3-this.tour) &&
+      this.echiquier[this.pionCliquer.row-2][this.pionCliquer.column-2].type === 0)
+      {
+        this.echiquier[this.pionCliquer.row-2][this.pionCliquer.column-2].possible = 1;
+        compt = true;
+      }
+    }
+    if(this.pionCliquer.row+2 < this.ligne && this.pionCliquer.column-2 >= 0)
+    {
+      if(this.echiquier[this.pionCliquer.row+1][this.pionCliquer.column-1].type === (3-this.tour) &&
+      this.echiquier[this.pionCliquer.row+2][this.pionCliquer.column-2].type === 0)
+      {
+        this.echiquier[this.pionCliquer.row+2][this.pionCliquer.column-2].possible = 1;
+        compt = true;
+      }
+    }
+    if(this.pionCliquer.row-2 >= 0 && this.pionCliquer.column+2 < this.colonne)
+    {
+      if(this.echiquier[this.pionCliquer.row-1][this.pionCliquer.column+1].type === (3-this.tour) &&
+      this.echiquier[this.pionCliquer.row-2][this.pionCliquer.column+2].type === 0)
+      {
+        this.echiquier[this.pionCliquer.row-2][this.pionCliquer.column+2].possible = 1;
+        compt = true;
+      }
+    }
+    return compt;
+  }
+  
+  deplacementSimplePion(column,row){
+    let diffCordonneeY = row - this.pionCliquer.row;
+    let diffCordonneeX = column - this.pionCliquer.column;
+    if(Math.abs(diffCordonneeX) === 1 &&  
+       ((diffCordonneeY === 1 && this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type === 2) || 
+        (diffCordonneeY === -1 && this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type === 1))) {
+      this.echiquier[row][column].type = this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type;
+      this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type = 0;
+      this.pionCliquer.status = 0;
+      this.pionCliquer.row = null;
+      this.pionCliquer.column = null;
+      this.tour = 3-this.tour;; 
     }
   }
   

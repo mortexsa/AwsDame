@@ -32,7 +32,7 @@ client.connect(function(err) {
   assert.equal(null, err);
   console.log("Connected successfully to server")});
   
-  let list = user.find({title : "MongoDB Overview"}).toArray();
+  let list =  user.find({title : "MongoDB Overview"}).toArray();
   console.log(list);
   
   
