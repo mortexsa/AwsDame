@@ -20,11 +20,11 @@
 		</header>
 		<section>
 			<div id="formulaire_connexion">
-				<form action="" method="post">
-					<p><input type="text" name="pseudo" placeholder="Pseudo" class="colone_remplire"></p>
-					<p><input type="text" name="inscri_email" placeholder="Adresse e-mail" class="colone_remplire"></p>
-					<p><input type="password" name="inscri_password" placeholder="Tapez votre mot de passe" class="colone_remplire"></p>
-					<p><input type="password" name="inscri_password2" placeholder="Retapez votre mot de passe" class="colone_remplire"></p>
+				<form action="/inscription" method="POST">
+					<p><input type="text" name="pseudo" placeholder="Pseudo" class="colone_remplire" value="{{ pseudo }}" required> <p><spam style="color: red;"><b>{{ messagePseudo }}</b></spam></p></p>
+					<p><input type="email" name="email" placeholder="Adresse e-mail" class="colone_remplire" value="{{ email }}" required> <p><spam style="color: red;"><b>{{ massageEmail }}</b></spam></p></p>
+					<p><input type="password" name="password" placeholder="Tapez votre mot de passe" class="colone_remplire" value="{{ password }}" required></p>
+					<p><input type="password" name="password2" placeholder="Confirmez votre mot de passe" class="colone_remplire" value="{{ password2 }}" required> <p><spam style="color: red;"><b>{{ messagePassword }}</b></spam></p></p>
 					<p><input type="submit" name="submit" value="S'inscrire" id="submit"></p>
 				</form>
 			</div>

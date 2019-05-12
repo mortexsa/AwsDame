@@ -27,6 +27,7 @@ client.connect(function(err) {
 });
 
 
+
 // init project
 const express = require('express');
 const bodyP = require('body-parser');
@@ -82,11 +83,70 @@ app.post('/', function(req, res)
 app.get('/inscription', function(req, res) {
   res.render('inscription.html')
 });
-app.post('/inscription', function(req, res) {
-  
-  if(req.session.login)
+app.post('/inscription', async function(req, res) {
+  //let expReg = (/^([a-zA-Z0-9]+)$/);
+  if(req.body.password === req.body.password2)
   {
-    res.redirect('/inscription');
+    const db = await client.db(dbName);
+    let user = await db.collection('User');
+    user.find({pseudo: req.body.pseudo}).toArray(async function(err, resultat1)
+      {
+        if(err){res.send(err);}
+        else if(!resultat1.length)
+        {
+          user.find({email: req.body.email}).toArray(async function(err, resultat2)
+          {
+            if(err){res.send(err);}
+            else if(!resultat2.length)
+            {
+              let insert = await db.collection('User');
+              insert.insertOne({pseudo: req.body.pseudo,
+                                email: req.body.email,
+                                password: req.body.password,
+                                partieGagner: 0,
+                                partiePerdu: 0,
+                                partieJouer: 0
+                                }, function(err)
+                              {
+                                assert.equal(null, err);
+                              });
+              //res.render('index.html', {'test': resultat});
+              res.redirect('/');
+          //res.render('index.html', {'test': resultat });
+            }
+            else
+            {
+              res.render('inscription.html', {massageEmail: 'Cet email est déjà utilisé',
+                                              pseudo: req.body.pseudo,
+                                              email: req.body.email,
+                                              password: req.body.password,
+                                              password2: req.body.password2
+                                             });
+            }
+            
+          });
+          
+        }
+        else
+        {
+          res.render('inscription.html', {messagePseudo: 'Ce login existe déjà',
+                                          pseudo: req.body.pseudo,
+                                          email: req.body.email,
+                                          password: req.body.password,
+                                          password2: req.body.password2
+                                         });
+        }
+      });
+                          
+  }
+  else if(req.body.password !== req.body.password2)
+  {
+    res.render('inscription.html', {messagePassword: 'Confirmation du mot de passe incorrecte',
+                                    pseudo: req.body.pseudo,
+                                    email: req.body.email,
+                                    password: req.body.password,
+                                    password2: req.body.password2
+                                    });
   }
   else
   {
@@ -103,7 +163,7 @@ app.get('/jeu', function(req, res){
 app.get('/index', async function(req, res){
   const db = await client.db(dbName);
   let user = await db.collection('User');
-  user.find({}).toArray(function(err, resultat) {
+  user.find({$or: [{pseudo: 'bobo'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat){
     if(err){
       res.send(err);
     }else if(resultat.length)
