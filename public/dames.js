@@ -164,6 +164,20 @@ class Dames
     }
   }
   
+  winner(){
+    let compteurJoueur1 = 0;
+    let compteurJoueur2 = 0;
+    for (let i = 0; i<this.ligne; i++) {
+      for (let j = 0; j < this.colonne; j++) {
+        if(this.echiquier[i][j].type === 1) {compteurJoueur1++;} 
+        else if(this.echiquier[i][j].type === 2) {compteurJoueur2++;}
+      }
+    }
+    console.log("joueur1: "+compteurJoueur1)
+    if(compteurJoueur1 === 0){this.gagnant = 2;}
+    else if(compteurJoueur2 === 0){this.gagnant = 1;}
+  }
+  
   priseParPion(column,row){
     if(this.echiquier[row][column].possible === 1){
       let diffCordonneeY = (row - this.pionCliquer.row)/2;
@@ -243,15 +257,7 @@ class Dames
   /* la gection du clic */
   handle_click(event)
   {
-    // Vérifier si la partie est encore en cours
-    if (this.gagnant !== null) {
-  		if (window.confirm("Game over!\n\nDo you want to restart?")) {
-  			this.initialisation();
-        this.render();
-			}
-			return;
-    }
-  
+    
 /****** j'ai pas encore regarder ********/
 	  let column = event.target.dataset.column;
     let row = event.target.dataset.row;
@@ -259,10 +265,24 @@ class Dames
       column = parseInt(column);
       row = parseInt(row);
       this.play(column,row);
-      
       this.render();
+      this.winner();
+      
       //console.log(this.pionCliquer.row);
       
+    }
+    // Vérifier si la partie est encore en cours
+    if (this.gagnant !== null) {
+      if(this.gagnant === 1) {
+         window.alert("Player 1 wins"); 
+      } else if(this.gagnant === 2) {
+         window.alert("Player 2 wins"); 
+      } 
+  		if (window.confirm("Game over!\n\nDo you want to restart?")) {
+  			this.initialisation();
+        this.render();
+			}
+			return;
     }
   }
 }
