@@ -18,7 +18,9 @@
     "consolidate": "^0.15.1",
     "mongodb": "^3.2.3",
     "assert": "^1.4.1",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "htmlspecialchars": "^1.0.5",
+    "password-hash": "^1.2.2"
   },
   "engines": {
     "node": "8.x"
