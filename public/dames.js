@@ -118,7 +118,11 @@ class Dames
         let colour = this.echiquier[i][j].type;
         if (colour)
         {
-          div.className = 'player' + colour;
+          if(this.echiquier[i][j].dame){
+            div.className = 'dames' + colour;    
+          } else { 
+            div.className = 'player' + colour;
+          }
         }
         
         
@@ -145,7 +149,6 @@ class Dames
   }
   
   play(column,row){
-    console.log(this.tour);
     if(this.pionCliquer.status === 1 && this.echiquier[row][column].type === 0) {
       if(!this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame){ 
         if(!this.pionCliquer.obligatoire) {
@@ -154,13 +157,67 @@ class Dames
           this.priseParPion(column,row);
         }  
       } else {
-        //Dame
+        if(!this.pionCliquer.obligatoire) {
+          this.deplacementSimpleDame(column,row);
+        } else {
+          
+        } 
       }
     } else if(this.tour === this.echiquier[row][column].type && !this.pionCliquer.obligatoire) {
       this.pionCliquer.status = 1;
       this.pionCliquer.row = row;
       this.pionCliquer.column = column;
-      this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+      if(!this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame) {
+        this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+      } else {
+        //dame
+        this.pionCliquer.obligatoire = false;
+      }
+    }
+    this.estDame();
+  }
+  
+  estDame() {
+    for (let j = 0; j < this.colonne; j++) {
+      if(this.echiquier[0][j].type === 1) {
+        this.echiquier[0][j].dame = true;
+      }
+      if(this.echiquier[this.ligne-1][j].type === 2) {
+        this.echiquier[this.ligne-1][j].dame = true;
+      }
+    }
+  }
+  
+  deplacementSimpleDame(column,row) {
+    let PasY = (row - this.pionCliquer.row)/Math.abs(row - this.pionCliquer.row);
+    let PasX = (column - this.pionCliquer.column)/Math.abs(column - this.pionCliquer.column);
+    let i = this.pionCliquer.row+PasY;
+    let j = this.pionCliquer.column+PasX;
+    if(Math.abs(row - this.pionCliquer.row) === Math.abs(column - this.pionCliquer.column)){
+      
+      while(i !== row+PasY && j !== column+PasX){
+         /*console.log("r1: "+this.pionCliquer.row+" c1: "+this.pionCliquer.column);
+        console.log("r: "+row+" c: "+column);
+        console.log("i: "+i+" j: "+j);
+        */if(this.echiquier[i][j].type === 1 || this.echiquier[i][j].type === 2) {
+          console.log("i: "+i+" j: "+j);
+          console.log("merde");
+          return false;
+          break;
+        }
+        i+=PasY;
+        j+=PasX;
+      }
+
+      this.echiquier[row][column].type = this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type;
+      this.echiquier[row][column].dame = true;
+      this.echiquier[this.pionCliquer.row][this.pionCliquer.column].type = 0;
+      this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame = false;
+      this.pionCliquer.status = 0;
+      this.pionCliquer.row = null;
+      this.pionCliquer.column = null;
+      this.tour = 3-this.tour;
+      return true;
     }
   }
   
@@ -173,7 +230,6 @@ class Dames
         else if(this.echiquier[i][j].type === 2) {compteurJoueur2++;}
       }
     }
-    console.log("joueur1: "+compteurJoueur1)
     if(compteurJoueur1 === 0){this.gagnant = 2;}
     else if(compteurJoueur2 === 0){this.gagnant = 1;}
   }
@@ -250,7 +306,7 @@ class Dames
       this.pionCliquer.status = 0;
       this.pionCliquer.row = null;
       this.pionCliquer.column = null;
-      this.tour = 3-this.tour;; 
+      this.tour = 3-this.tour; 
     }
   }
   
