@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>DAMES-DELUXE</title>
+	<link rel="stylesheet" type="text/css" href="accueil.css">
+  <script src="/client.js" defer></script>
+</head>
+
+<body>
+	<div id="bloc_page">
+		<header>
+			<div id="photo">
+				<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781s">
+			</div>
+			<div id="titre_principal">
+				<h2>DAMES DELUXE</h2>
+				<h4>Le meilleur du Jeu de Dames en ligne!</h4>
+			</div>
+		</header>
+		<section>
+      <!--<script>alert('Il y a une faille XSS')</script>-->
+      <h1><spam style="color: red;"><b>{{ message1 }}</b></spam></h1>
+      <p><spam style="color: red;"><b>{{ message2 }}</b></spam></p>
+      <div id="formulaire_connexion">
+				<form action="" method="post">
+					<p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+					<p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
+					<p><input type="submit" name="submit" value="Connexion" id="submit"></p>
+				</form>
+			</div>
+			<div id="pour_inscrire">
+			<p>Vous n'avez pas de compte? <a href="/inscription">Cliquez içi pour vous inscrire</a></p>
+			<!--<p><a href="administrateur/index.php">Pour les admins c'est par içi</a></p>-->
+			</div>
+		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	
+		</section>
+    <footer>
+        <p>Dames Deluxe | Tous droits réservés</p>
+    </footer>
+	</div>	
+</body>
+
+</html>
