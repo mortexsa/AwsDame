@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<link rel="stylesheet" type="text/css" href="liste.css">
+<script src="client.js" defer></script>
+</head>
+<body>
+  <header id="container">
+	<nav class="menu">
+		<div id="logo_recherche">
+			<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781">
+			<form method="get" action="exercices.php">
+				<input type="search" name="q" placeholder="Rechercher un exercice">
+				<input type="submit" value="OK">
+			</form>
+		</div>
+		<ul>
+			<li>
+				<a href="#statistique">{{ pseudo }}</a>
+			</li>
+			<li>
+				<a href="#connecter">Membres connectés</a>
+			</li>
+			<li>
+				<a href="profil.php">Profil</a>
+			</li>
+			<li>
+				<a href="/userDeconnecter">Deconnexion</a>
+			</li>
+		</ul>
+	</nav>
+  </header>
+  
+  <div id="conteneur">
+    <section>
+      <p>
+        Liste des défi
+      </p>
+      <div id="defi">
+      </div>
+    </section>
+    
+    <section>
+      <p>
+        Liste des user connecter
+      </p>
+      <div id="listUser">
+
+      </div>
+    </section>
+  </div>
+</body>
+</html>
+

@@ -284,69 +284,32 @@ class Dames
   
   estPriseObligatoireDame() {
     let compt = false;
-    let i = this.pionCliquer.row + 1;
-    let j = this.pionCliquer.column + 1;
-    while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0) {   
-      if(this.echiquier[i][j].type === 1 || this.echiquier[i][j].type === 2) {
-        i += 1;
-        j += 1;
-        while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0 && this.echiquier[i][j].type === 0) {
-          this.echiquier[i][j].possible = 1;
-          compt = true;
-          i += 1;
-          j += 1;
-        }
+    let r,c;
+    for(let a=0; a<4; a++){
+      switch(a){
+        case 0: r=1;c=1; break;
+        case 1: r=-1;c=-1; break;
+        case 2: r=1;c=-1; break;
+        default: r=-1;c=1; break;
       }
-      i += 1;
-      j += 1;
-    }
-    i = this.pionCliquer.row - 1;
-    j = this.pionCliquer.column - 1;
-    while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0) {   
-      if(this.echiquier[i][j].type === 1 || this.echiquier[i][j].type === 2) {
-        i -= 1;
-        j -= 1;
-        while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0 && this.echiquier[i][j].type === 0) {
-          this.echiquier[i][j].possible = 1;
-          compt = true;
-          i -= 1;
-          j -= 1;
+      let i = this.pionCliquer.row+r;
+      let j = this.pionCliquer.column+c;
+      while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0) {
+        if(this.echiquier[i][j].type === this.tour){
+          break;
+        }else if(this.echiquier[i][j].type === (3-this.tour)) {
+          i += r;
+          j += c;
+          while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0 && this.echiquier[i][j].type === 0) {
+            this.echiquier[i][j].possible = 1;
+            compt = true;
+            i += r;
+            j += c;
+          }
         }
+        i += r;
+        j += c;
       }
-      i -= 1;
-      j -= 1;
-    }
-    i = this.pionCliquer.row + 1;
-    j = this.pionCliquer.column - 1;
-    while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0) {   
-      if(this.echiquier[i][j].type === 1 || this.echiquier[i][j].type === 2) {
-        i += 1;
-        j -= 1;
-        while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0 && this.echiquier[i][j].type === 0) {
-          this.echiquier[i][j].possible = 1;
-          compt = true;
-          i += 1;
-          j -= 1;
-        }
-      }
-      i += 1;
-      j -= 1;
-    }
-    i = this.pionCliquer.row - 1;
-    j = this.pionCliquer.column + 1;
-    while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0) {   
-      if(this.echiquier[i][j].type === 1 || this.echiquier[i][j].type === 2) {
-        i -= 1;
-        j += 1;
-        while(i < this.ligne && i >= 0 && j < this.colonne && j >= 0 && this.echiquier[i][j].type === 0) {
-          this.echiquier[i][j].possible = 1;
-          compt = true;
-          i -= 1;
-          j += 1;
-        }
-      }
-      i -= 1;
-      j += 1;
     }
     return compt;
   }
