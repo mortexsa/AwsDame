@@ -1,61 +1,207 @@
 // server.js
 // where your node app starts
-
+const User = require('./User.js');
 // Configuration de la base de donnée
 //console.log('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const htmlspecialchars = require('htmlspecialchars');
 const passwordHash = require('password-hash');
+const sanitize = require('mongo-sanitize');
 
 // URL de connexion
 // Standard URI format: mongodb://[dbuser:dbpassword@]host:port/dbname, details set in .env
 var url = 'mongodb+srv://'+process.env.USER+':'+process.env.PASS+'@'+process.env.HOST+'/'+process.env.DB;
-
 // Nom de la Base de Donnée
 const dbName = 'AwsDame';
-
 // Creer un new MongoClient
-const client = new MongoClient(url);
-
+const client = new MongoClient(url, {useNewUrlParser: true});
 // Utilisation de la methode connect pour se connecter a la base de donnée
 client.connect(function(err) {
   assert.equal(null, err);
   console.log("Connected successfully to server");
 
   //const db = client.db(dbName);
-
 });
-
 
 
 // init project
 const express = require('express');
 const bodyP = require('body-parser');
 require('express-async-errors');
+var http = require('http');
+var ws = require('ws');
 const app = express();
+app.use(bodyP.json());
 app.use(bodyP.urlencoded({ extended: false }));
 
 const consolidate = require('consolidate');
 app.engine('html', consolidate.nunjucks);
 app.set('view engine', 'nunjucks');
 //app.set('views', 'views');
-
 // session
 var session = require('express-session');
-
 // on active les cookies
 const cookieP = require('cookie-parser');
 app.use(cookieP());
-
 app.use(session({
     secret: '12345',
     resave: false,
     saveUninitialized: false,
 }));
 
+// Websocket
+// We attach express and ws to the same HTTP server
+var server = http.createServer(app);
+var wsserver = new ws.Server({ 
+    server: server,
+});
 
 
+// We define the WebSocket logic
+wsserver.on('connection', function(wsconn) {
+    console.log('Received new WS connection');
+    var myuser = null;
+    var initialisation = false;
+    /*if(myuser !== null )//&& !initialisation)
+    {
+      initialisation =true;
+      //myuser.setWSocket(wsconn);
+      
+       //console.log('soket '+wsconn);
+    }*/
+    if(myuser !== null)
+    {
+      userConnecter();
+    }
+    wsconn.on('message', async function(data)
+    {
+      //userConnecter();
+      let recu = JSON.parse(data);
+      //console.log(initialisation);
+      if(recu['type'] == 'userName')
+      {
+        listeDesUserConnecter[recu['message']].setWSocket(wsconn);
+        //console.log(myuser);
+        userConnecter();
+      }
+      else if(recu['type'] == 'defi')
+      {
+        console.log('défi réçu pour '+recu['message']);
+        //console.log('de '+listeDesUserConnecter[recu['message']]);
+        console.log('invite '+listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]));
+        console.log('lui qui invite '+listeDesUserConnecter[recu['this']].getPseudo());
+        console.log('linviter '+listeDesUserConnecter[recu['message']].getPseudo());
+        if(listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]))
+        {
+          console.log('envoi du défi au concerner');
+          console.log('get soket '+listeDesUserConnecter[recu['message']].getWSocket());
+          listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defi',
+                                                                                   message: listeDesUserConnecter[recu['this']].getPseudo()
+                                                                                  }));
+        }
+      }
+      else if(recu['type'] == 'defiAccepter')
+      {
+        console.log('défi accepter reçu pour '+ listeDesUserConnecter[recu['message']].getPseudo() + ' envoyer par '+listeDesUserConnecter[recu['this']].getPseudo());
+        listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
+        listeDesUserConnecter[recu['this']].getWSocket().send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
+        /*console.log(listeDesUserConnecter['testtest'].getWSocket());
+        console.log(listeDesUserConnecter['ibrahim'].getWSocket());*/
+        //update();
+        // mise a jour de la liste des user
+        userConnecter();
+      }else if (recu['type'] == 'defiRefuser')
+      {
+        console.log('defi Refuser accepter reçu pour '+recu['message']);
+        listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defiRefuser', message: recu['this']}));
+      }
+      else
+      {
+        userConnecter();
+      }
+    });
+    // etc...
+    wsconn.on('close', function()
+    {
+      
+    });
+  
+  
+    function update(){
+        // Broadcast to everyone else.
+    wsserver.clients.forEach(function (client) {
+      /*(client !== wsconn && client.readyState === ws.OPEN)*/
+      if (client.readyState === ws.OPEN) {
+        client.send(JSON.stringify({ type: 'defiAccepter', message: listeDesUserConnecter['testtest'].getPseudo()}));
+      }
+    });
+  }
+
+  
+  // Broadcast to all.
+  wsconn.broadcast = function broadcast(data) {
+    wsconn.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });  
+  };
+
+
+});
+//ibra t la ????? je qoi ?  mais gros je vien de "appeler repond put !!!!!:
+function userConnecter(){
+    // Broadcast to everyone else.
+    wsserver.clients.forEach(function (client) {
+      /*(client !== wsconn && client.readyState === ws.OPEN)*/
+      if (client.readyState === ws.OPEN) {
+        client.send(JSON.stringify({type: 'userConnecter', message: listeUser(listeDesUserConnecter)}));
+      }
+    }); 
+  }
+/*async function userConnecter()
+{
+  wsserver.clients.forEach(async function (client) {
+    /*(client !== wsconn && client.readyState === ws.OPEN)*/
+    /*if (client.readyState === ws.OPEN)
+    {
+      const db = client.db(dbName);
+      //let liste = await db.collection('UserConnecter');
+      let user = await db.collection('User');
+        user.find({$or: [{pseudo: 'bobo'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat)
+        {
+          if(err)
+          {
+              assert.send(err);
+          }
+          else if(resultat.length)
+          {
+            //console.log("dans serveur");
+            let liste = [];
+            liste [0]= resultat[0].pseudo;
+            liste[1] = resultat[1].pseudo;
+            client.send(JSON.stringify({type: 'userConnecter', listUser: liste}));
+          }
+        });  
+    }
+  }); 
+}*/
+
+function listeUser(dic)
+{
+  let maListe = [];
+  let i = 0;
+  for(let x in dic)
+  {
+
+      maListe[i++] = dic[x].pseudo;
+    
+  }
+  return maListe;
+}
+
+var listeDesUserConnecter = {};
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
@@ -66,18 +212,78 @@ app.use(express.static('public'));
 // on ajoute des routes vers l'url /
 app.get('/', function(req, res)
 {
-  res.render('connexion.html')
+  res.render('connexion.html');
+  //res.render('liste.html');
+  //res.sendFile(__dirname + '/public/liste.html');
 });
-app.post('/', function(req, res)
+app.post('/', async function(req, res)
 {
-  if(req.session.login)
+  var email = sanitize(req.body.email);
+  var password = sanitize(req.body.password);
+  const db = client.db(dbName);
+  let user = await db.collection('User');
+  //user.findOne({'email':{"$gt":""},'password':{"$gt":""}},function(err,data){ // injection mongodb
+  // Evite une injection mongodb
+  user.findOne({'email': { $in: [email] }/*,'password': { $in: [password] }*/},async function(err,resultat)
   {
-    res.redirect('/');
-  }
-  else
+    
+    if(err){res.send(err);}
+    else if(resultat && passwordHash.verify(password,resultat.password))
+    {
+      
+      // socket
+      //let myuser = new User(resultat.pseudo,resultat.email);
+      /*let userConnecter = await db.collection('UserConnecter');
+      userConnecter.insertOne({user: myuser
+                              }, function(err)
+                              {
+                                assert.equal(null, err);
+                              });*/
+        //console.log('myuser '+myuser);
+        //listeDesUserConnecter[myuser.pseudo] = myuser;
+        wsserver.on('connection', function(wsconn)
+        {
+          let myuser = new User(resultat.pseudo,resultat.email);
+          listeDesUserConnecter[myuser.pseudo] = myuser;
+          wsconn.send(JSON.stringify({ type: 'connect', message: myuser.pseudo }));
+        });
+        res.redirect('/userConnecter');
+    }
+    else
+    {
+          //res.send('Wrong Username Password Combination');
+      res.render('connexion.html', {message1: 'Impossible de ce connecter', message2: 'Email ou mot de passe incorrect'});
+    }
+  });
+ 
+});
+
+//liste des user connecter
+app.get('/userConnecter',async function(req, res) {
+  const db = client.db(dbName);
+  let userConnecter = await db.collection('UserConnecter');
+  let liste = await userConnecter.find({}).toArray( function(err, resultat2)
+      {
+        if(err){res.send(err);}
+        //console.log('resultat '+resultat2[0].user.pseudo);
+        //listeDesUserConnecter = resultat2;
+      });
+  res.render('liste.html');
+});
+app.get('/userDeconnecter',async function(req, res) {
+  const db = client.db(dbName);
+  let userDeconnecter = await db.collection('UserConnecter');
+  let liste = await userDeconnecter.deleteOne({user: 'myuser'});
+  //let i = listeDesUserConnecter.indexOf(myuser.getPseudo());
+  //listeDesUserConnecter.splice(i,1);
+  if(listeDesUserConnecter['myuser.pseudo'].getWSocket())
   {
-    res.render('connexion.html');
+    listeDesUserConnecter['myuser.pseudo'].supprimeWSocket();
   }
+  
+  listeDesUserConnecter['myuser.pseudo'].initState();
+  delete listeDesUserConnecter['myuser.pseudo'];
+  res.redirect('/');
 });
 
 // on ajoute des routes vers l'url /inscription
@@ -93,7 +299,7 @@ app.post('/inscription', async function(req, res) {
   
   if(req.body.password.length > 0 && req.body.password2.length > 0 && req.body.pseudo.length > 0 && req.body.email.length >0){
     if(req.body.password.length >5 && req.body.password2.length > 5 && req.body.password === req.body.password2) {
-      const db = await client.db(dbName);
+      const db = client.db(dbName);
       let user = await db.collection('User');
       if(req.body.pseudo.length > 4 && req.body.pseudo.length < 21){
         var reg = new RegExp("^[a-zA-Z0-9._-]{4,20}$"); 
@@ -210,9 +416,10 @@ app.get('/jeu', function(req, res){
 
 // on ajoute des routes vers l'url /index
 app.get('/index', async function(req, res){
-  const db = await client.db(dbName);
+  const db = client.db(dbName);
   let user = await db.collection('User');
-  user.find({$or: [{pseudo: 'bobo'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat){
+  //user.find({$or: [{pseudo: 'testtest'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat){
+  user.find({}).toArray(function(err, resultat){
     if(err){
       res.send(err);
     }else if(resultat.length)
@@ -222,7 +429,14 @@ app.get('/index', async function(req, res){
   });
 });
 
+  
+  
+  
+//})
+
+
+server.listen(process.env.PORT);
 // listen for requests :)
-const listener = app.listen(process.env.PORT, function() {
+/*const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
-});
+});*/

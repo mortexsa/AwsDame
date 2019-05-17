@@ -10,7 +10,7 @@
 	<div id="bloc_page">
 		<header>
 			<div id="photo">
-				<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fdame.png?1557404735757">
+				<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781s">
 			</div>
 			<div id="titre_principal">
 				<h2>DAMES DELUXE</h2>
@@ -18,10 +18,13 @@
 			</div>
 		</header>
 		<section>
+      <!--<script>alert('Il y a une faille XSS')</script>-->
+      <h1><spam style="color: red;"><b>{{ message1 }}</b></spam></h1>
+      <p><spam style="color: red;"><b>{{ message2 }}</b></spam></p>
       <div id="formulaire_connexion">
 				<form action="" method="post">
-					<p><input type="email" name="email" placeholder="Adresse e-mail" id="email"></p>
-					<p><input type="password" name="password" placeholder="Mot de passe" id="password"></p>
+					<p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+					<p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
 					<p><input type="submit" name="submit" value="Connexion" id="submit"></p>
 				</form>
 			</div>

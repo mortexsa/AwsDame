@@ -1,0 +1,143 @@
+@font-face {
+    font-family: 'Raleway';
+    src: url(https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2FRaleway-ExtraLight.ttf?1557406520769);
+    font-weight: lighter;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Raleway';
+    src: url(https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2FRaleway-SemiBold.ttf?1557406613600);
+    font-weight: bold;
+    font-style: normal;
+}
+body {
+	margin: 0;
+	font-family: "Raleway",Arial;
+	font-weight: bold;
+}
+#conteneur {	
+  min-height: 479px;
+	margin-bottom: 5px;
+	width: 98%;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1.5px solid black;
+	border-radius: 5px;
+	padding-top: 30px;
+	padding-bottom: 50px;
+	text-align: center;
+	box-shadow: 4px 4px 2px 0.5px rgba(0, 0, 0, .2);
+	margin-top: 65px;
+}
+.userConnecter td {
+	font-size: 1.1em;
+	padding: 8px;
+}
+
+.userConnecter {
+  background-color: black;
+  color: white;
+}
+.userConnecter:hover {
+	background-color: rgba(255,255,255,0.07);;
+	color: white;
+	border-radius: 5px;
+	font-size: 1.02em;
+	padding: 6px;
+}
+
+header {
+	margin-top: -65px;
+	width: 100%;
+	position: fixed;
+}
+nav {
+	background-color: black;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	align-content: center;
+	flex-wrap: wrap-reverse;
+}
+
+#logo_recherche {
+	display: flex;
+	align-items: center;
+}
+#logo_recherche input {
+	border-radius: 5px;
+	padding: 6px;
+	box-shadow: 0px 0px 4px 1.1px rgba(255,255,255,.8);
+	border: 1px solid white;
+}
+#logo_recherche input[type=submit]{
+	background: none;
+	color: white;
+	margin-left: -5px;
+	font-weight: bold;
+	transition: all 0.5s ease;
+}
+
+#logo_recherche img
+{
+	width: 30px;
+	height: 30px;
+}
+
+nav ul {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+nav ul li {
+	margin-right: 30px;
+}
+nav ul li a {
+	text-decoration: none;
+	color: white;
+	transition: all 0.3s ease;
+}
+nav ul li a:hover {
+	background-color: white;
+	color: black;
+	padding: 5px;
+	border-radius: 2px;
+	box-shadow: 0px 0px 4px 2px rgba(255,255,255,.8);
+}
+#logo_recherche input[type=submit]:hover {
+	background-color: white;
+	color: #424242;
+}
+
+
+@media all and (max-width: 845px) {
+	#conteneur {
+		margin-top: 115px;
+	}
+	header {
+		margin-top: -115px;
+	}
+}
+
+@media all and (max-width: 600px) {
+	nav ul {
+		flex-direction: column;
+	}
+	#conteneur {
+		margin-top: 132px;
+	}
+	header {
+		margin-top: -132px;
+	}
+}
+@media all and (max-width: 460px) {
+	nav ul {
+		flex-direction: column;
+	}
+	#conteneur {
+		margin-top: 192px;
+	}
+	header {
+		margin-top: -192px;
+	}
+}
