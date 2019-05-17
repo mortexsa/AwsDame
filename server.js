@@ -70,18 +70,26 @@ wsserver.on('connection', function(wsconn) {
       
        //console.log('soket '+wsconn);
     }*/
-    if(myuser !== null)
+    /*f(myuser !== null)
     {
       userConnecter();
-    }
-    wsconn.on('message', async function(data)
+    }*/
+    wsconn.on('message', function(data)
     {
+      
+      
       //userConnecter();
-      let recu = JSON.parse(data);
+      let recu = JSON.parse(data);//ibra t la ?
       //console.log(initialisation);
       if(recu['type'] == 'userName')
       {
-        listeDesUserConnecter[recu['message']].setWSocket(wsconn);
+        myuser = new User(recu['message'].pseudo,
+                          recu['message'].email,
+                          recu['message'].partieGagner,
+                          recu['message'].partiePerdu,
+                          recu['message'].partieJouer,
+                          wsconn);
+        listeDesUserConnecter[recu['message'].pseudo] = myuser;
         //console.log(myuser);
         userConnecter();
       }
@@ -89,32 +97,29 @@ wsserver.on('connection', function(wsconn) {
       {
         console.log('défi réçu pour '+recu['message']);
         //console.log('de '+listeDesUserConnecter[recu['message']]);
-        console.log('invite '+listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]));
-        console.log('lui qui invite '+listeDesUserConnecter[recu['this']].getPseudo());
-        console.log('linviter '+listeDesUserConnecter[recu['message']].getPseudo());
-        if(listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]))
+        //console.log('invite '+listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]));
+        //console.log('lui qui invite '+listeDesUserConnecter[recu['this']].getPseudo());
+        //console.log('linviter '+listeDesUserConnecter[recu['message']].getPseudo());
+        if(myuser.invite(listeDesUserConnecter[recu['message']]))
         {
           console.log('envoi du défi au concerner');
-          console.log('get soket '+listeDesUserConnecter[recu['message']].getWSocket());
-          listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defi',
-                                                                                   message: listeDesUserConnecter[recu['this']].getPseudo()
+          //console.log('get soket '+listeDesUserConnecter[recu['message']].getWSocket());
+          listeDesUserConnecter[recu['message']].wsconn.send(JSON.stringify({ type: 'defi',
+                                                                                   message: myuser.getPseudo()
                                                                                   }));
         }
       }
       else if(recu['type'] == 'defiAccepter')
       {
-        console.log('défi accepter reçu pour '+ listeDesUserConnecter[recu['message']].getPseudo() + ' envoyer par '+listeDesUserConnecter[recu['this']].getPseudo());
-        listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
-        listeDesUserConnecter[recu['this']].getWSocket().send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
-        /*console.log(listeDesUserConnecter['testtest'].getWSocket());
-        console.log(listeDesUserConnecter['ibrahim'].getWSocket());*/
-        //update();
+        console.log('défi accepter reçu pour '+ recu['message']);
+        //console.log(listeDesUserConnecter[recu['message']]);
+        myuser.wsconn.send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
         // mise a jour de la liste des user
-        userConnecter();
+        //userConnecter();
       }else if (recu['type'] == 'defiRefuser')
       {
         console.log('defi Refuser accepter reçu pour '+recu['message']);
-        listeDesUserConnecter[recu['message']].getWSocket().send(JSON.stringify({ type: 'defiRefuser', message: recu['this']}));
+        listeDesUserConnecter[recu['message']].wsconn.send(JSON.stringify({ type: 'defiRefuser', message: recu['this']}));
       }
       else
       {
@@ -206,7 +211,7 @@ var listeDesUserConnecter = {};
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
 // http://expressjs.com/en/starter/static-files.html
-app.use(express.static('public'));
+app.use('/',express.static('public'));
 
 
 // on ajoute des routes vers l'url /
@@ -241,12 +246,19 @@ app.post('/', async function(req, res)
                               });*/
         //console.log('myuser '+myuser);
         //listeDesUserConnecter[myuser.pseudo] = myuser;
+
         wsserver.on('connection', function(wsconn)
         {
-          let myuser = new User(resultat.pseudo,resultat.email);
-          listeDesUserConnecter[myuser.pseudo] = myuser;
-          wsconn.send(JSON.stringify({ type: 'connect', message: myuser.pseudo }));
+          let myuser = new User(resultat.pseudo,
+                                resultat.email,
+                                resultat.partieGagner,
+                                resultat.partiePerdu,
+                                resultat.partieJouer,);
+          wsconn.personName = resultat.pseudo;
+          //listeDesUserConnecter[myuser.pseudo] = myuser;
+          wsconn.send(JSON.stringify({ type: 'connect', message: myuser }));
         });
+
         res.redirect('/userConnecter');
     }
     else

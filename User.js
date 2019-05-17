@@ -2,12 +2,12 @@ class User
 {
   // Varialbe
   // Constructeur
-  constructor(pseudo, email/*, wsconn*/)
+  constructor(pseudo, email,partieGagner, partiePerdu, partieJouer,wsconn)
   {
     this.pseudo = pseudo;
     this.email = email;
-    //this.wsconn = wsconn;       // The WS connection to the user browser
-    //this.state = 'AVAILABLE';   // An internal state
+    this.wsconn = wsconn;       // The WS connection to the user browser
+    this.state = 'AVAILABLE';   // An internal state
     this.partieGagner = 0;
     this.partiePerdu = 0;
     this.partieJouer = 0;

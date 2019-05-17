@@ -1,13 +1,16 @@
 
 // client-side js
 // run by the browser each time your view template is loaded
-var user;
+var user = null;
 var ws = new WebSocket('wss://' + window.location.host);
 
 ws.addEventListener('open', function(e)
 {
   console.log('suis la');
-  
+  if(user != null)
+  {
+      ws.send(JSON.stringify({ type: 'userName', message: user }));
+  }
   //ws.send(JSON.stringify({ type: 'connect', message: 'nomUtilisateur' }));
   
   ws.addEventListener('message', function(e)
@@ -38,7 +41,7 @@ ws.addEventListener('open', function(e)
         bouton.addEventListener('click', function(event)
                                       {
                                         console.log('envoi du defi a ' + msg['message'][i]);
-                                        ws.send(JSON.stringify({ type: 'defi', message: msg['message'][i], this: user }));
+                                        ws.send(JSON.stringify({ type: 'defi', message: msg['message'][i], this: user.pseudo }));
                                       });
         //bouton.dataset.colonne = msg['listUser'][i];
         //bouton.disabled = true;
@@ -67,8 +70,8 @@ ws.addEventListener('open', function(e)
       boutonOk.textContent = 'Accepter';
       boutonOk.addEventListener('click', function(event)
                                     {
-                                      console.log('jai accepter ('+user+')');
-                                      ws.send(JSON.stringify({ type: 'defiAccepter', message: msg['message'], this: user}));//nom user
+                                      console.log('jai accepter ('+user.pseudo+')');
+                                      ws.send(JSON.stringify({ type: 'defiAccepter', message: msg['message'], this: user.pseudo}));//nom user
                                     });
       boutonRefu.textContent = 'Refuser';
       boutonRefu.addEventListener('click', function(event)
