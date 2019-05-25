@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<link rel="stylesheet" type="text/css" href="profil.css">
+<link rel="stylesheet" type="text/css" href="footer.css">
+</head>
+<body id="dame">
+  <header id="container">
+	<nav class="menu">
+		<div id="logo_recherche">
+			<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781">
+			<form method="get" action="exercices.php">
+				<input type="search" name="q" placeholder="Rechercher un Membre">
+				<input type="submit" value="OK">
+			</form>
+		</div>
+		<ul>
+			<li>
+				<a href="/profil">{{ pseudo }}</a>
+			</li>
+			<li>
+				<a href="/userConnecter">Membres connectés</a>
+			</li>
+			<li>
+				<a href="/userDeconnecter">Deconnexion</a>
+			</li>
+		</ul>
+	</nav>
+  </header>
+  <div id="conteneur">
+   
+    <section>
+			<h1>Mon profil</h1>
+      <div id="tableau">
+        <table>
+          <tr>
+            <th>
+              Nom 
+            </th>
+            <th>
+              {{ profil.pseudo }}
+            </th>
+          </tr>
+          <tr>
+            <th>
+              email 
+            </th>
+            <th>
+              {{ profil.email }}
+            </th>
+          </tr>
+          <tr>
+            <th>
+              Parties Jouer 
+            </th>
+            <th>
+              {{ profil.partieJouer }}
+            </th>
+          </tr>
+          <tr>
+            <th>
+              Parties Gagnées 
+            </th>
+            <th>
+              {{ profil.partieGagner }}
+            </th>
+          </tr>
+          <tr>
+            <th>
+              Parties Perdu 
+            </th>
+            <th>
+              {{ profil.partiePerdu }}
+            </th>
+          </tr>
+        </table>
+      </div>
+      <div id="boutton_creation">	
+				<a href="/changePassword">Changer mon Mot de passe</a>
+			</div>
+
+      
+    </section>
+    
+  </div>
+  <br><br>
+  <footer>
+        <p>Dames Deluxe | Tous droits réservés</p>
+    </footer>
+</body>
+</html>

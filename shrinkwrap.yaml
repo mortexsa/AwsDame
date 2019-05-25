@@ -8,7 +8,7 @@ dependencies:
   express-session: 1.16.1
   htmlspecialchars: 1.0.5
   mongo-sanitize: 1.0.1
-  mongodb: 3.2.4
+  mongodb: 3.2.5
   nunjucks: 3.2.0
   password-hash: 1.2.2
   react-dom: 16.8.6
@@ -1266,7 +1266,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-y18QHyoQomBPdv48F0pJfBByZXql056fcj+5cPZt9MbpR+d1kKaGYQ3tiKE3bZLWDHBuMr5djhlxGO0vEMp2/A==
-  /mongodb-core/3.2.4:
+  /mongodb-core/3.2.5:
     dependencies:
       bson: 1.1.1
       require_optional: 1.0.1
@@ -1275,16 +1275,16 @@ packages:
     optionalDependencies:
       saslprep: 1.0.3
     resolution:
-      integrity: sha512-Ea/fjVntuj0nhLPuDPj54Kce+w4Ee6b1oSM2EvNB4OdwXJ5WIEh79st9/FRZVKwGnc2oB19P1SMSC1noOBXUCQ==
-  /mongodb/3.2.4:
+      integrity: sha512-czmFd/7Cy+PxItL5KewYgkKTJGb2JyC1PdIdLBVGHER4Vsgu/A+fXDDNO+PLuyHNdh7qbH2XyLP4HHAifgBBoQ==
+  /mongodb/3.2.5:
     dependencies:
-      mongodb-core: 3.2.4
+      mongodb-core: 3.2.5
       safe-buffer: 5.1.2
     dev: false
     engines:
       node: '>=4'
     resolution:
-      integrity: sha512-tjuwdRb89oyCamBG9lWkb7Sf4L/XJ0hsTC22NkbECl3j2X8n+rM+ZlK3dyIPdaJXdc4FOKIRd9dodVJgCtsYMA==
+      integrity: sha512-VEu2nsfFMwWA6q6JVnlJ2kNVwjluU4op2J/YiG1LeI14t9HotLXbg8w3I794BvezC4ZCZ/wBTTdby01txalwwQ==
   /ms/2.0.0:
     dev: false
     resolution:
@@ -2141,7 +2141,7 @@ specifiers:
   express-session: ^1.16.1
   htmlspecialchars: ^1.0.5
   mongo-sanitize: ^1.0.1
-  mongodb: ^3.2.4
+  mongodb: ^3.2.5
   nunjucks: ^3.2.0
   password-hash: ^1.2.2
   react-dom: ^16.8.6

@@ -21,7 +21,6 @@ client.connect(function(err) {
   assert.equal(null, err);
   console.log("Connected successfully to server");
 
-  //const db = client.db(dbName);
 });
 
 
@@ -44,82 +43,195 @@ var session = require('express-session');
 // on active les cookies
 const cookieP = require('cookie-parser');
 app.use(cookieP());
-app.use(session({
-    secret: '12345',
+var sess_storage = session({ 
+    secret: "12345",
     resave: false,
     saveUninitialized: false,
-}));
-
+});
+app.use(sess_storage);
 // Websocket
 // We attach express and ws to the same HTTP server
 var server = http.createServer(app);
 var wsserver = new ws.Server({ 
     server: server,
+    verifyClient: function(info, next) {
+        sess_storage(info.req, {}, function(err) {
+            if (err) {
+                next(false, 500, "Error: " + err);
+            } else {
+                // Pass false if you want to refuse the connection
+                next(true);
+            }
+        });
+    },
 });
 
 
 // We define the WebSocket logic
-wsserver.on('connection', function(wsconn) {
-    console.log('Received new WS connection');
+wsserver.on('connection', function(wsconn, req) {
+    console.log('Received new WS connection ');
+    //console.log('session ' , req.session);
+    //req.session.adversaire = 'un test';
+    //console.log('session ' , req.session);
     var myuser = null;
-    var initialisation = false;
-    /*if(myuser !== null )//&& !initialisation)
+    if(req.session.pseudo)
     {
-      initialisation =true;
-      //myuser.setWSocket(wsconn);
+      myuser = new User(req.session);
+      wsconn.send(JSON.stringify({ type: 'nomUser', message: myuser.pseudo }));
+      //myuser = new User(req.session);
+      /*listeDesUserConnecter[myuser.pseudo] = myuser;*/
+      if(!listeDesUserConnecter[myuser.pseudo])
+      {
+        listeDesUserConnecter[myuser.pseudo] = myuser;
+      }
+      else
+      {
+        myuser = listeDesUserConnecter[myuser.pseudo];
+      }
       
-       //console.log('soket '+wsconn);
-    }*/
-    /*f(myuser !== null)
-    {
+      //console.log('myuser '+myuser);
       userConnecter();
-    }*/
+    }
     wsconn.on('message', function(data)
     {
-      
-      
-      //userConnecter();
-      let recu = JSON.parse(data);//ibra t la ?
-      //console.log(initialisation);
-      if(recu['type'] == 'userName')
+      let recu = JSON.parse(data);
+      if(recu['type'] == 'init')
       {
-        myuser = new User(recu['message'].pseudo,
-                          recu['message'].email,
-                          recu['message'].partieGagner,
-                          recu['message'].partiePerdu,
-                          recu['message'].partieJouer,
-                          wsconn);
-        listeDesUserConnecter[recu['message'].pseudo] = myuser;
-        //console.log(myuser);
-        userConnecter();
+        if(myuser && myuser.pseudo)
+        {
+          console.log('dans init ');
+          listeDesUserConnecter[myuser.pseudo].wsconns[recu['message']] = wsconn;
+          myuser = listeDesUserConnecter[myuser.pseudo];
+          userConnecter();
+        }
       }
       else if(recu['type'] == 'defi')
       {
-        console.log('défi réçu pour '+recu['message']);
-        //console.log('de '+listeDesUserConnecter[recu['message']]);
-        //console.log('invite '+listeDesUserConnecter[recu['this']].invite(listeDesUserConnecter[recu['message']]));
-        //console.log('lui qui invite '+listeDesUserConnecter[recu['this']].getPseudo());
-        //console.log('linviter '+listeDesUserConnecter[recu['message']].getPseudo());
-        if(myuser.invite(listeDesUserConnecter[recu['message']]))
+        console.log('défi réçu pour '+ recu['message']);
+        if(listeDesUserConnecter[myuser.pseudo].invite(listeDesUserConnecter[recu['message']]))
         {
           console.log('envoi du défi au concerner');
-          //console.log('get soket '+listeDesUserConnecter[recu['message']].getWSocket());
-          listeDesUserConnecter[recu['message']].wsconn.send(JSON.stringify({ type: 'defi',
-                                                                                   message: myuser.getPseudo()
-                                                                                  }));
+          send(listeDesUserConnecter[recu['message']].wsconns, 'client',{ type: 'defi',
+                                                                              message: myuser.pseudo
+                                                                        });
         }
+        else
+        {
+            send(listeDesUserConnecter[myuser.pseudo].wsconns, 'client',{ type: 'dejaEnDefi',
+                                                                              message: recu['message']
+                                                                        });
+        }
+        userConnecter();
       }
       else if(recu['type'] == 'defiAccepter')
       {
         console.log('défi accepter reçu pour '+ recu['message']);
-        //console.log(listeDesUserConnecter[recu['message']]);
-        myuser.wsconn.send(JSON.stringify({ type: 'defiAccepter', message: recu['this']}));
+        //console.log('myuser '+myuser.pseudo);
+        listeDesUserConnecter[myuser.pseudo].jeux[recu['message']] = myuser.lancerDefi(listeDesUserConnecter[recu['message']]);
+        if(listeDesUserConnecter[myuser.pseudo].jeux[recu['message']])
+        {
+          send(listeDesUserConnecter[recu['message']].wsconns, 'client',{ type: 'defiAccepter',
+                                                                            message: myuser.pseudo
+                                                                        });
+          send(listeDesUserConnecter[myuser.pseudo].wsconns, 'client',{ type: 'defiAccepter',
+                                          message: recu['message']
+                                        });
+          enDefi(myuser, listeDesUserConnecter[recu['message']]);
+        }
+        else
+        {
+          send(myuser.wsconns, 'client',{ type: 'erreuServeur',
+                                        });
+        }
         // mise a jour de la liste des user
-        //userConnecter();
+        userConnecter();
       }else if (recu['type'] == 'defiRefuser')
       {
-        console.log('defi Refuser accepter reçu pour '+recu['message']);
-        listeDesUserConnecter[recu['message']].wsconn.send(JSON.stringify({ type: 'defiRefuser', message: recu['this']}));
+        console.log('defi Refuser reçu pour '+recu['message']);
+        send(listeDesUserConnecter[recu['message']].wsconns, 'client',{ type: 'defiRefuser',
+                                                                        message: myuser.pseudo
+                                                                      });
+        userConnecter();
+      }
+      else if(recu['type'] == 'quiter')
+      {
+        if(listeDesUserConnecter[myuser.pseudo].quiter(listeDesUserConnecter[recu['message']]))
+        {
+          send(listeDesUserConnecter[myuser.pseudo].wsconns, recu['message'],{ type: 'quiter', message: recu['message']});
+          //send(listeDesUserConnecter[recu['message']].wsconns, myuser.pseudo,{ type: 'aquiter', message: myuser.pseudo});
+          
+          //defiTermier(myuser.pseudo, recu['message']);
+          //console.log('envoi du mesg quiter');
+        }
+        else
+        {
+          send(listeDesUserConnecter[myuser.pseudo].wsconns, 'client',{ type: 'pasEnDefi', message: recu['message']});
+        }
+        userConnecter();
+      }
+      else if(recu['type'] == 'confQuiter')
+      {
+        send(listeDesUserConnecter[recu['message']].wsconns, myuser.pseudo,{ type: 'aquiter', message: myuser.pseudo});
+        send(listeDesUserConnecter[recu['message']].wsconns, 'client',{ type: 'quiter', message: myuser.pseudo});
+        send(listeDesUserConnecter[myuser.pseudo].wsconns, 'client',{ type: 'quiter', message: recu['message']});
+        miseAjourUserPerdant(myuser.pseudo);
+        miseAjourUserGagnat(recu['message']);
+        miseAjourBD(client, listeDesUserConnecter[myuser.pseudo]);
+        miseAjourBD(client, listeDesUserConnecter[recu['message']]);
+        defiTermier(myuser.pseudo, recu['message']);
+        userConnecter();
+      }
+      else if(recu['type'] === 'deplacement') {
+          console.log('joueur1 '+listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']]);
+        if(listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']])
+        {
+          if((listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].joueur1.pseudo == myuser.pseudo && listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].tour == 1) ||
+            (listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].joueur2.pseudo == myuser.pseudo && listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].tour == 2)){
+            listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].play(recu['x'], recu['y']);
+            if(listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].winner()){
+              //on doit sauvegarder dans la bdd, c'est ok :)
+              console.log("ayajahnid: "+listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].gagnant);
+              
+              send(listeDesUserConnecter[myuser.pseudo].wsconns, recu['contre'],{ type: 'gagnant', message: myuser.pseudo, win: 1,
+                                              echiquier: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].echiquier,
+                                              pionCliquer: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].pionCliquer
+                                            });
+              send(listeDesUserConnecter[recu['contre']]
+                    .wsconns, listeDesUserConnecter[myuser.pseudo].pseudo,{ type: 'perdant', message: myuser.pseudo, win: 0,
+                                              echiquier: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].echiquier,
+                                              pionCliquer: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].pionCliquer
+                                            });
+              miseAjourUserGagnat(myuser.pseudo);
+              miseAjourUserPerdant(recu['contre']);
+              miseAjourBD(client, listeDesUserConnecter[myuser.pseudo]);
+              miseAjourBD(client, listeDesUserConnecter[recu['contre']]);
+              defiTermier(myuser.pseudo, recu['contre']);
+              
+            }
+            else 
+            {
+              send(listeDesUserConnecter[recu['contre']]
+                      .wsconns, listeDesUserConnecter[myuser.pseudo].pseudo,{ type: 'deplacement',
+                                                message: myuser.pseudo,
+                                                echiquier: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].echiquier,
+                                                pionCliquer: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].pionCliquer
+                                            });
+              console.log('contre '+ listeDesUserConnecter[recu['contre']].pseudo);
+              
+              send(listeDesUserConnecter[myuser.pseudo].wsconns, recu['contre'],{ type: 'deplacement',
+                                                    message: recu['contre'],
+                                                    echiquier: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].echiquier,
+                                                    pionCliquer: listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']].pionCliquer
+                                            });
+              console.log('moi '+ myuser.pseudo);
+            }
+         }
+        }
+        else
+        {
+
+        }
+        userConnecter();
       }
       else
       {
@@ -127,36 +239,46 @@ wsserver.on('connection', function(wsconn) {
       }
     });
     // etc...
-    wsconn.on('close', function()
+    wsconn.on('close', function(window)
     {
-      
-    });
-  
-  
-    function update(){
-        // Broadcast to everyone else.
-    wsserver.clients.forEach(function (client) {
-      /*(client !== wsconn && client.readyState === ws.OPEN)*/
-      if (client.readyState === ws.OPEN) {
-        client.send(JSON.stringify({ type: 'defiAccepter', message: listeDesUserConnecter['testtest'].getPseudo()}));
+      if(myuser != null)
+      {        
+        userConnecter();
       }
     });
-  }
-
-  
-  // Broadcast to all.
-  wsconn.broadcast = function broadcast(data) {
-    wsconn.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });  
-  };
-
 
 });
-//ibra t la ????? je qoi ?  mais gros je vien de "appeler repond put !!!!!:
-function userConnecter(){
+
+const send = (wsconns, id, data) => wsconns[id].send(JSON.stringify(data));
+
+function miseAjourUserPerdant(myuser)
+{
+  listeDesUserConnecter[myuser].partiePerdu++;
+  listeDesUserConnecter[myuser].partieJouer++;
+  /*console.log('perdu '+listeDesUserConnecter[myuser].partiePerdu);
+  console.log('jouer '+listeDesUserConnecter[myuser].partieJouer);*/
+}
+function miseAjourUserGagnat(myuser)
+{
+  listeDesUserConnecter[myuser].partieGagner++;
+  listeDesUserConnecter[myuser].partieJouer++;
+  /*console.log('gagner '+listeDesUserConnecter[myuser].partieGagner);
+  console.log('jouer '+listeDesUserConnecter[myuser].partieJouer);*/
+}
+
+function miseAjourBD(client, myuser)
+{
+  const db = client.db(dbName);
+  let user = db.collection('User');
+  user.updateOne({pseudo: myuser.pseudo},{$set:{partieGagner: myuser.partieGagner, 
+                                              partiePerdu: myuser.partiePerdu, 
+                                              partieJouer: myuser.partieJouer
+                                             }
+                                       });
+  console.log('mise a jour');
+}
+function userConnecter()
+{
     // Broadcast to everyone else.
     wsserver.clients.forEach(function (client) {
       /*(client !== wsconn && client.readyState === ws.OPEN)*/
@@ -164,34 +286,45 @@ function userConnecter(){
         client.send(JSON.stringify({type: 'userConnecter', message: listeUser(listeDesUserConnecter)}));
       }
     }); 
-  }
-/*async function userConnecter()
+}
+
+function defiTermier(user1, user2)
 {
-  wsserver.clients.forEach(async function (client) {
-    /*(client !== wsconn && client.readyState === ws.OPEN)*/
-    /*if (client.readyState === ws.OPEN)
-    {
-      const db = client.db(dbName);
-      //let liste = await db.collection('UserConnecter');
-      let user = await db.collection('User');
-        user.find({$or: [{pseudo: 'bobo'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat)
-        {
-          if(err)
-          {
-              assert.send(err);
-          }
-          else if(resultat.length)
-          {
-            //console.log("dans serveur");
-            let liste = [];
-            liste [0]= resultat[0].pseudo;
-            liste[1] = resultat[1].pseudo;
-            client.send(JSON.stringify({type: 'userConnecter', listUser: liste}));
-          }
-        });  
-    }
-  }); 
-}*/
+  wsserver.clients.forEach(function (client) {
+      /*(client !== wsconn && client.readyState === ws.OPEN)*/
+    delete listeDesUserConnecter[user1].wsconns[user2]
+    delete listeDesUserConnecter[user1].jeux[user2]
+    delete listeDesUserConnecter[user2].wsconns[user1]
+    delete listeDesUserConnecter[user2].jeux[user1]
+      if (client.readyState === ws.OPEN) {
+        client.send(JSON.stringify({ type: 'defiTerminer',
+                                              message2: user2,
+                                              message1: user1
+                                            }));
+      }
+    });
+}
+
+function enDefi(user1, user2)
+{
+  wsserver.clients.forEach(function (client) {
+      /*(client !== wsconn && client.readyState === ws.OPEN)*/
+      if (client !== user1.wsconns.client && client !== user2.wsconns.client  && client.readyState === ws.OPEN) {
+        client.send(JSON.stringify({ type: 'enDefi',
+                                              message2: user2.pseudo,
+                                              message1: user1.pseudo
+                                            }));
+      }
+    });
+}
+
+function tout(wsconns)
+{
+  for(let i in wsconns)
+  {
+    wsconns[i].send(JSON.stringify({ type: 'TEST'}));
+  }
+}
 
 function listeUser(dic)
 {
@@ -200,7 +333,8 @@ function listeUser(dic)
   for(let x in dic)
   {
 
-      maListe[i++] = dic[x].pseudo;
+      //maListe[i++] = dic[x].pseudo;
+      maListe[i++] = dic[x];
     
   }
   return maListe;
@@ -211,15 +345,22 @@ var listeDesUserConnecter = {};
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
 // http://expressjs.com/en/starter/static-files.html
-app.use('/',express.static('public'));
+app.use(express.static('public'));
 
 
 // on ajoute des routes vers l'url /
 app.get('/', function(req, res)
 {
-  res.render('connexion.html');
-  //res.render('liste.html');
-  //res.sendFile(__dirname + '/public/liste.html');
+  //console.log('session ' + req.session.pseudo);
+  if(req.session.pseudo)
+  {
+    res.redirect('/userConnecter');
+  }
+  else
+  {
+    res.render('connexion.html');
+  }
+  
 });
 app.post('/', async function(req, res)
 {
@@ -235,31 +376,13 @@ app.post('/', async function(req, res)
     if(err){res.send(err);}
     else if(resultat && passwordHash.verify(password,resultat.password))
     {
+      req.session.pseudo = resultat.pseudo;
+      req.session.email = resultat.email;
+      req.session.partieGagner = resultat.partieGagner;
+      req.session.partiePerdu = resultat.partiePerdu;
+      req.session.partieJouer = resultat.partieJouer;
       
-      // socket
-      //let myuser = new User(resultat.pseudo,resultat.email);
-      /*let userConnecter = await db.collection('UserConnecter');
-      userConnecter.insertOne({user: myuser
-                              }, function(err)
-                              {
-                                assert.equal(null, err);
-                              });*/
-        //console.log('myuser '+myuser);
-        //listeDesUserConnecter[myuser.pseudo] = myuser;
-
-        wsserver.on('connection', function(wsconn)
-        {
-          let myuser = new User(resultat.pseudo,
-                                resultat.email,
-                                resultat.partieGagner,
-                                resultat.partiePerdu,
-                                resultat.partieJouer,);
-          wsconn.personName = resultat.pseudo;
-          //listeDesUserConnecter[myuser.pseudo] = myuser;
-          wsconn.send(JSON.stringify({ type: 'connect', message: myuser }));
-        });
-
-        res.redirect('/userConnecter');
+      res.redirect('/userConnecter');
     }
     else
     {
@@ -271,31 +394,101 @@ app.post('/', async function(req, res)
 });
 
 //liste des user connecter
-app.get('/userConnecter',async function(req, res) {
-  const db = client.db(dbName);
+app.get('/userConnecter', function(req, res) {
+  /*const db = client.db(dbName);
   let userConnecter = await db.collection('UserConnecter');
   let liste = await userConnecter.find({}).toArray( function(err, resultat2)
       {
         if(err){res.send(err);}
         //console.log('resultat '+resultat2[0].user.pseudo);
         //listeDesUserConnecter = resultat2;
-      });
-  res.render('liste.html');
-});
-app.get('/userDeconnecter',async function(req, res) {
-  const db = client.db(dbName);
-  let userDeconnecter = await db.collection('UserConnecter');
-  let liste = await userDeconnecter.deleteOne({user: 'myuser'});
-  //let i = listeDesUserConnecter.indexOf(myuser.getPseudo());
-  //listeDesUserConnecter.splice(i,1);
-  if(listeDesUserConnecter['myuser.pseudo'].getWSocket())
+      });*/
+  if(req.session.pseudo)
   {
-    listeDesUserConnecter['myuser.pseudo'].supprimeWSocket();
+    res.render('liste.html', {pseudo: req.session.pseudo, profil: req.session});
+  }
+  else
+  {
+    res.redirect('/');
   }
   
-  listeDesUserConnecter['myuser.pseudo'].initState();
-  delete listeDesUserConnecter['myuser.pseudo'];
+});
+app.get('/userDeconnecter', function(req, res) {
+  /*const db = client.db(dbName);
+  let userDeconnecter = await db.collection('UserConnecter');
+  let liste = await userDeconnecter.deleteOne({user: 'myuser'});
+  */
+  if(req.session.pseudo)
+  {
+    delete listeDesUserConnecter[req.session.pseudo];
+    req.session.destroy();
+  }
   res.redirect('/');
+});
+
+app.get('/profil', function(req, res) {
+  if(req.session.pseudo)
+  {
+    let user = listeDesUserConnecter[req.session.pseudo];
+    req.session.pseudo = user.pseudo;
+    req.session.email = user.email;
+    req.session.partieGagner = user.partieGagner;
+    req.session.partiePerdu = user.partiePerdu;
+    req.session.partieJouer = user.partieJouer;
+    res.render('profil.html', {pseudo: req.session.pseudo, profil: req.session});
+  }
+  else{
+    res.render('connexion.html');
+  }
+});
+
+app.get('/changePassword', function(req, res) {
+  if(req.session.pseudo)
+  {
+    res.render('changePassword.html', {pseudo: req.session.pseudo, profil: req.session});
+  }
+  else{
+    res.render('connexion.html');
+  }
+});
+
+
+app.post('/changePassword', async function(req, res) {
+  if(req.session.pseudo)
+  {
+    var password1 = sanitize(req.body.password_change);
+    var password2 = sanitize(req.body.sec_password_change);
+    let pseudo = sanitize(req.session.pseudo);
+    if(password1.length > 5 && password1.length < 25){
+      if(password1 === password2){
+        const db = client.db(dbName);
+        let user = await db.collection('User');
+        user.findOne({pseudo: { $in: [pseudo] }},async function(err,resultat)
+        {
+
+          if(err){res.send(err);}
+          else if(resultat && !passwordHash.verify(password1,resultat.password))
+          {
+            const db = client.db(dbName);
+            let user =db.collection('User');
+            user.updateOne({pseudo: pseudo},{$set:{password: passwordHash.generate(password1)}});
+            res.render('changePassword.html', {message2: "Mot de passe moidifier avec succes"});
+          }
+          else
+          {
+
+            res.render('changePassword.html', {message: "Veuillez inserer un mot de passe différent de l'ancien"});
+          }
+        });
+      }
+      else {
+          res.render('changePassword.html', {message: 'Veuillez inserer des mots de passe identique'});
+      }
+    } else {
+      res.render('changePassword.html', {message: 'Le mot de passe doit contenir entre 6 et 25 caractères'});
+    } 
+  }
+    
 });
 
 // on ajoute des routes vers l'url /inscription
@@ -423,7 +616,7 @@ app.post('/inscription', async function(req, res) {
 
 // on ajoute des routes vers l'url /jeu
 app.get('/jeu', function(req, res){
-  res.render('jeu.html');
+  res.render('jeuTest.html', {moi: req.session.pseudo, contre:  req.params.user});
 });
 
 // on ajoute des routes vers l'url /index
@@ -451,4 +644,4 @@ server.listen(process.env.PORT);
 // listen for requests :)
 /*const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
-});*/
+});*/ // a toutyuser.pseudo]

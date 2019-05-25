@@ -2,15 +2,15 @@ class Dames
 {
   // Varialbe
   // Constructeur
-  constructor(element_id, ws, ligne=10, colonne=10)
+  constructor(element_id, joueur1, joueur2, ligne=10, colonne=10)
   {
-    //this.joueur1
-    //this.joueur2
+    this.joueur1 = joueur1;
+    this.joueur2 = joueur2;
      // Nombre de lignes et de colonnes
-    this.ws = ws;
     this.ligne = ligne;
     this.colonne = colonne;
     this.nbPion = 20;
+    this.obliger = false;
     //le pion choisi par le joueur
     this.pionCliquer = {"column":null,"row":null,"status": 0,"obligatoire":false};
     // cet tableau à deux dimensions contient l'état du jeu:
@@ -30,16 +30,16 @@ class Dames
     */
     this.gagnant = null;
     // L'élément du DOM où se fait l'affichage
-    this.element = document.querySelector(element_id);
+//    this.element = document.querySelector(element_id);
     // On ajoute le gestionnaire d'événements pour gérer le click
     //
     // Pour des raisons techniques, il est nécessaire de passer comme gestionnaire
     // une fonction anonyme faisant appel à `this.gerer_click`. Passer directement
     // `this.gerer_click` comme gestionnaire, sans wrapping, rendrait le mot clef
     // `this` inutilisable dans le gestionnaire. Voir le "binding de this".
-    this.element.addEventListener('click', (event) => this.handle_click(event));
+//    this.element.addEventListener('click', (event) => this.handle_click(event));
     // On fait l'affichage
-    this.render();
+//    this.render();
   }
   // Initialisation du jeu
   initialisation()
@@ -51,7 +51,7 @@ class Dames
       
       for(let j=0; j<this.colonne; j++)
       {
-        this.echiquier[i][j] = {"type":0 , "dame":false, "possible":0};
+        this.echiquier[i][j] = {"type":0 , "dame":false, "possible":0, "obligatoire":0 };
       }
     }
     this.initiJour1();
@@ -104,9 +104,17 @@ class Dames
       }
     }    
   }
+  initObligatoire()
+  {
+    for (let i = 0; i<this.ligne; i++) {
+      for (let j = 0; j < this.colonne; j++) {
+        this.echiquier[i][j].obligatoire = 0;
+      }
+    }    
+  }
   
   /* Affiche le plateau de jeu dans le DOM */
-  render()
+/*  render()
   {
     let table = document.createElement('table');
     for (let i = 0; i<this.ligne; i++)
@@ -150,8 +158,9 @@ class Dames
     this.element.innerHTML = '';
     this.element.appendChild(table);
   }
-  
+*/  
   play(column,row){
+    //if(this.tour)
     if(this.pionCliquer.status === 1 && this.echiquier[row][column].type === 0) {
       if(!this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame){ 
         if(!this.pionCliquer.obligatoire) {
@@ -166,7 +175,9 @@ class Dames
           this.priseParDame(column,row);
         } 
       }
-    } else if(this.tour === this.echiquier[row][column].type && !this.pionCliquer.obligatoire) {
+      this.obligatoire = false;
+      this.initObligatoire();
+    } else if(this.tour === this.echiquier[row][column].type && !this.pionCliquer.obligatoire && !this.obliger) {
       this.pionCliquer.status = 1;
       this.pionCliquer.row = row;
       this.pionCliquer.column = column;
@@ -176,8 +187,95 @@ class Dames
         //dame
         this.pionCliquer.obligatoire = this.estPriseObligatoireDame();
       }
+      //this.initObligatoire();
+    }else if (this.tour === this.echiquier[row][column].type && this.obliger){
+      if(this.echiquier[row][column].obligatoire == 1){
+        this.initPossibilite();
+        this.pionCliquer.status = 1;
+        this.pionCliquer.row = row;
+        this.pionCliquer.column = column;
+        if(!this.echiquier[this.pionCliquer.row][this.pionCliquer.column].dame) {
+          this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+        } else {
+          //dame
+          this.pionCliquer.obligatoire = this.estPriseObligatoireDame();
+        }
+        
+      }
     }
+    this.obliger = this.deplacementObligatoire();
     this.estDame();
+  }
+  
+  deplacementObligatoire() {
+    let compt = false;
+     for(let i=0; i<this.ligne; i++)
+    {
+      for(let j=0; j<this.colonne; j++)
+      {
+        if(this.echiquier[i][j].type === this.tour){
+          if(i+2 < this.ligne && j+2 < this.colonne)
+          {
+            if(this.echiquier[i+1][j+1].type === (3-this.tour) &&
+            this.echiquier[i+2][j+2].type === 0) {
+              this.echiquier[i][j].obligatoire = 1;
+              compt = true;
+            }
+          }
+          if(i-2 >= 0 && j-2 >= 0)
+          {
+            if(this.echiquier[i-1][j-1].type === (3-this.tour) &&
+            this.echiquier[i-2][j-2].type === 0) {
+              this.echiquier[i][j].obligatoire = 1;
+              compt = true;
+            }
+          }
+          if(i+2 < this.ligne && j-2 >= 0)
+          {
+            if(this.echiquier[i+1][j-1].type === (3-this.tour) &&
+            this.echiquier[i+2][j-2].type === 0) {
+              this.echiquier[i][j].obligatoire = 1;
+              compt = true;
+            }
+          }
+          if(i-2 >= 0 && j+2 < this.colonne) {
+            if(this.echiquier[i-1][j+1].type === (3-this.tour) &&
+            this.echiquier[i-2][j+2].type === 0) {
+              this.echiquier[i][j].obligatoire = 1;
+              compt = true;
+            }
+          }
+          if(this.echiquier[i][j].dame){
+            let r,c;
+            for(let a=0; a<4; a++){
+              switch(a){
+                case 0: r=1;c=1; break;
+                case 1: r=-1;c=-1; break;
+                case 2: r=1;c=-1; break;
+                default: r=-1;c=1; break;
+              }
+              let y = i+r;
+              let z = j+c;
+              while(y < this.ligne && y >= 0 && z < this.colonne && z >= 0) {
+                if(this.echiquier[y][z].type === this.tour){
+                  break;
+                }else if(this.echiquier[y][z].type === (3-this.tour)) {
+                  y += r;
+                  z += c;
+                  if(y < this.ligne && y >= 0 && z < this.colonne && z >= 0 && this.echiquier[y][z].type === 0) {
+                    this.echiquier[i][j].obligatoire = 1;
+                    compt = true;
+                  }
+                }
+                y += r;
+                z += c;
+              }
+            }
+          }
+        }
+      }
+    }
+    return compt;
   }
   
   estDame() {
@@ -227,8 +325,9 @@ class Dames
         else if(this.echiquier[i][j].type === 2) {compteurJoueur2++;}
       }
     }
-    if(compteurJoueur1 === 0){this.gagnant = 2;}
-    else if(compteurJoueur2 === 0){this.gagnant = 1;}
+    if(compteurJoueur1 === 0){this.gagnant = 2; return 1;}
+    else if(compteurJoueur2 === 0){this.gagnant = 1; return 1;}
+    return 0;
   }
   
   priseParPion(column,row) {
@@ -241,7 +340,12 @@ class Dames
       this.pionCliquer.row = row;
       this.pionCliquer.column = column;
       this.initPossibilite();
-      this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+      this.estDame();
+      if(this.echiquier[row][column].dame){
+        this.pionCliquer.obligatoire = this.estPriseObligatoireDame();
+      }else {
+        this.pionCliquer.obligatoire = this.estPriseObligatoirePion();
+      }
       if(!this.pionCliquer.obligatoire) {   
         this.pionCliquer.status = 0;
         this.pionCliquer.row = 0;
@@ -364,17 +468,16 @@ class Dames
       this.pionCliquer.status = 0;
       this.pionCliquer.row = null;
       this.pionCliquer.column = null;
-      this.tour = 3-this.tour;
-      this.ws.send(JSON.stringify({ type: 'deplacement', y: row, x: column}));
+      this.tour = 3-this.tour; 
     }
   }
   
   /* la gection du clic */
-  handle_click(event)
+/*  handle_click(event)
   {
-    
+*/    
 /****** j'ai pas encore regarder ********/
-	  let column = event.target.dataset.column;
+/*	  let column = event.target.dataset.column;
     let row = event.target.dataset.row;
   	if (column !== undefined && row !== undefined) {
       column = parseInt(column);
@@ -400,28 +503,19 @@ class Dames
 			return;
     }
   }
+*/  
+  // on quite je jeu
+  quiter()
+  {
+    this.joueur1.state = 'AVAILABLE';
+    this.joueur2.state = 'AVAILABLE';
+    delete this.joueur1;
+    delete this.joueur2;
+  }
 }
 
 // On initialise le plateau et on visualise dans le DOM
 // (dans la balise d'identifiant `game`).
+//let dame = new Dames('#dame');
 
-
-//module.exports = Dames;
-var ws = new WebSocket('wss://' + window.location.host);
-ws.addEventListener('open', function(e)
-{
-  console.log('dans jeu');
-  let dame = null;
-  if(!dame)
-  {
-    dame = new Dames('#dame', ws);
-  }
-  ws.addEventListener('message', function(e)
-  {
-    var msg = JSON.parse(e.data);
-    if(msg['type'] === 'userConnecter')
-    {
-      
-    }
-  });
-});
+module.exports = Dames;  
