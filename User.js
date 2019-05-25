@@ -1,47 +1,21 @@
+const Dames = require('./dames.js');
 class User
 {
   // Varialbe
   // Constructeur
-  constructor(pseudo, email,partieGagner, partiePerdu, partieJouer,wsconn)
+  constructor(dictionnaire)
   {
-    this.pseudo = pseudo;
-    this.email = email;
-    this.wsconn = wsconn;       // The WS connection to the user browser
+    this.pseudo = dictionnaire.pseudo;
+    this.email = dictionnaire.email;
+    this.wsconns = {};
+    this.jeux = {};
     this.state = 'AVAILABLE';   // An internal state
-    this.partieGagner = 0;
-    this.partiePerdu = 0;
-    this.partieJouer = 0;
+    this.partieGagner = dictionnaire.partieGagner;
+    this.partiePerdu = dictionnaire.partiePerdu;
+    this.partieJouer = dictionnaire.partieJouer;
   }
-  
-  // Getter
-  // get le pseudo
-  getPseudo()
-  {
-    return this.pseudo;
-  }
-  // get l'email
-  getEmail() {
-    return this.email;
-  }
-  // get le nombre de partie Gagner
-  getPartieGagner() {
-    return this.partieGagner;
-  }
-  // get le nombre de partie Perdu
-  getPartiePerdu() {
-    return this.partiePerdu;
-  }
-  // get le nombre de partie Jouer
-  getPartieJouer() {
-    return this.partieJouer;
-  }
-  getState()
-  {
-    return this.state;
-  }
-  getWSocket()
-  {
-    return this.wsconn;
+  getJeu(){
+    return this.jeu;
   }
   // set le websocket The WS connection to the user browser
   setWSocket(wsconn)
@@ -75,23 +49,40 @@ class User
   // inviter un adversaire a un défi
   invite(adversaire)
   { console.log('dans invite');
-    if(adversaire !== this /*&& adversaire.getState === this.getState && this.getState === 'AVAILABLE'*/)
+  console.log(adversaire);
+    if(adversaire !== this && !this.jeux[adversaire.pseudo])
     {
-      this.setState('PLAYING');
-      adversaire.setState('PLAYING');
       return true;
     }
     return false;
   }
-  supprimeWSocket()
+
+  lancerDefi(adversaire)
   {
-    this.wsconn = '';       // The WS connection to the user browser
-  }
-  initState()
-  {
-    this.state = 'AVAILABLE';   // An internal state
+    if(!this.jeux[adversaire.pseudo]);//adversaire.state === this.state && this.state === 'AVAILABLE')
+    {
+      this.state = 'PLAYING';
+      adversaire.state = 'PLAYING';
+      let dame = new Dames('#dame', adversaire, this);
+      this.jeux[adversaire.pseudo] = dame;
+      adversaire.jeux[this.pseudo] = dame;
+      return dame;
+    }
+    return null;
   }
   
+  // on quite le jeu
+  quiter(adversaire)
+  {
+    if(this.state === 'PLAYING')
+    {
+      //console.log('jeu '+this.jeux[adversaire.pseudo])
+      this.jeux[adversaire.pseudo].quiter();
+      return true;
+    }
+    return false;
+  }
+
   // description
   toJSON()
   {

@@ -3,27 +3,25 @@
 <head>
 <title>Page Title</title>
 <link rel="stylesheet" type="text/css" href="liste.css">
+<link rel="stylesheet" type="text/css" href="footer.css">
 <script src="client.js" defer></script>
 </head>
-<body>
+<body id="dame">
   <header id="container">
 	<nav class="menu">
 		<div id="logo_recherche">
 			<img src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781">
 			<form method="get" action="exercices.php">
-				<input type="search" name="q" placeholder="Rechercher un exercice">
+				<input type="search" name="q" placeholder="Rechercher un Membre">
 				<input type="submit" value="OK">
 			</form>
 		</div>
 		<ul>
 			<li>
-				<a href="#statistique">{{ pseudo }}</a>
+				<a href="/profil">{{ pseudo }}</a>
 			</li>
 			<li>
-				<a href="#connecter">Membres connectés</a>
-			</li>
-			<li>
-				<a href="profil.php">Profil</a>
+				<a href="/userConnecter">Membres connectés</a>
 			</li>
 			<li>
 				<a href="/userDeconnecter">Deconnexion</a>
@@ -34,22 +32,37 @@
   
   <div id="conteneur">
     <section>
-      <p>
+      <h2 class="list1">
         Liste des défi
-      </p>
+      </h2>
       <div id="defi">
+        
       </div>
     </section>
     
     <section>
-      <p>
+      <div id="jouerAvec">
+      </div>
+    </section>
+    
+    <section>
+      <div id="endefi">
+      </div>
+    </section>
+  
+    <section >
+      <h2 class="list1">
         Liste des user connecter
-      </p>
+      </h2>
       <div id="listUser">
 
       </div>
     </section>
   </div>
+  <br><br>
+  <footer>
+    <p>Dames Deluxe | Tous droits réservés</p>
+  </footer>
 </body>
 </html>
 

@@ -10,6 +10,37 @@
     font-weight: bold;
     font-style: normal;
 }
+
+section {
+	align-items: center;
+}
+table {
+	margin-left: auto;
+	margin-right: auto;
+  background-color:rgba(0, 0, 0, 0.3);
+  padding: 60px;
+  
+  width:50%;
+  height:80%;
+  border-radius: 50% 20% / 10% 40%;
+  box-shadow: 10px 7px 8px black;
+}
+th {
+	padding: 30px;
+	text-align: center;
+  border-radius: 40px;
+}
+
+tr th:nth-child(1){
+  background-color: black;
+  color:white;
+}
+
+tr th:nth-child(2){
+  background-color: white;
+  color:black;
+}
+
 body {
 	margin: 0;
 	font-family: "Raleway",Arial;
@@ -28,75 +59,6 @@ body {
 	text-align: center;
 	box-shadow: 4px 4px 2px 0.5px rgba(0, 0, 0, .2);
 	margin-top: 65px;
-}
-.userConnecter td {
-	font-size: 1.1em;
-	padding: 8px;
-}
-.userConnecter button{
-  display: inline-block;
-  border-radius: 4px;
-  background-color: #f4511e;
-  border: none;
-  color: #FFFFFF;
-  text-align: center;
-  font-size: 20px;
-  padding: 5px;
-  width: 100px;
-  transition: all 0.5s;
-  cursor: pointer;
-  margin: 3px;
-}
-
-.userConnecter button span{
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  transition: 0.5s;
-}
-
-.userConnecter button span:after {
-  content: '\00bb';
-  position: absolute;
-  opacity: 0;
-  top: 0;
-  right: -20px;
-  transition: 0.5s;
-}
-
-.userConnecter button:hover span {
-  padding-right: 25px;
-}
-
-.userConnecter button:hover span:after {
-  opacity: 1;
-  right: 0;
-}
-
-.userConnecter {
-  background-color: black;
-  color: white;
-}
-.userConnecter:hover {
-	background-color: rgba(200,200,200,0.7);;
-	color: black;
-	border-radius: 5px;
-	padding: 6px;
-}
-
-.list1 {
-  background-color:black;
-  color:white;
-  width:300px;
-  border-radius:30px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-#listUser table{
-  border-collapse:collapse;
-  margin-right:auto;
-  margin-left:auto;
 }
 
 header {
@@ -193,4 +155,20 @@ nav ul li a:hover {
 	header {
 		margin-top: -192px;
 	}
+}
+
+#boutton_creation a{
+	text-decoration: none;
+	background-color: white;
+	border: 1px solid black;
+	padding: 5px;
+	color: black;
+	border-radius: 3px;
+	box-shadow: 0px 0px 5px 0px black;
+	transition: all 0.5s ease;
+}
+#boutton_creation a:hover{
+	background-color: black;
+	color: white;
+	border-radius: 100px;
 }

@@ -16,7 +16,7 @@
     "nunjucks": "^3.2.0",
     "cookie-parser": "^1.4.4",
     "consolidate": "^0.15.1",
-    "mongodb": "^3.2.4",
+    "mongodb": "^3.2.5",
     "assert": "^2.0.0",
     "express-async-errors": "^3.1.1",
     "htmlspecialchars": "^1.0.5",
@@ -24,7 +24,8 @@
     "mongo-sanitize": "^1.0.1",
     "react-dom": "^16.8.6",
     "ws": "^7.0.0",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "ws-session": "^1.0.13"
   },
   "engines": {
     "node": "8.x"
