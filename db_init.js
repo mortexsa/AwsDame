@@ -22,7 +22,9 @@ client.connect(function(err) {
   // TOUS LES INSERTION ET AUTRES (creation de table etc...)
   let user = db.collection("User");
   let userConnecter = db.collection("UserConnecter");
-  user.insertOne({
+  
+  
+  /*user.insertOne({
       title: 'MongoDB Overview', 
       description: 'MongoDB is no sql database',
       by: 'tutorials point',
@@ -45,7 +47,7 @@ client.connect(function(err) {
   console.log("Connected successfully to bdd")});
   
   let list =  user.find({title : "MongoDB Overview"}).toArray();
-  console.log(list);
+  console.log(list);*/
   
   
   
