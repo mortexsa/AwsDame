@@ -10,6 +10,11 @@ ws.addEventListener('open', function(e)
   console.log('suis la');
   ws.send(JSON.stringify({ type: 'init', message: 'client' }));
   
+  let deconnexion = document.querySelector('#deconne');
+  deconnexion.addEventListener('click', function(event)
+                                        {
+                                          ws.send(JSON.stringify({ type: 'deconnexion'}));
+                                        });
   ws.addEventListener('message', function(e)
   {
     var msg = JSON.parse(e.data);
@@ -48,11 +53,11 @@ ws.addEventListener('open', function(e)
             pGagner.textContent = 'Parties gagnées: '+ msg['message'][i].partieGagner;
             pPerdu.textContent = 'Parties perdus: ' + msg['message'][i].partiePerdu;
             bouton.id = msg['message'][i].pseudo;
-            /*let span = bouton.appendChild(document.createElement('span'));
+            let span = bouton.appendChild(document.createElement('span'));
             span.textContent = 'Défier ';
             span.dataset.user = msg['message'][i].pseudo;
-            span.id = msg['message'][i].pseudo;*/
-            bouton.textContent = 'Défier ';
+            span.id = msg['message'][i].pseudo;
+            //bouton.textContent = 'Défier ';
             bouton.dataset.user = msg['message'][i].pseudo;
             if(msg['message'][i] === user)
             {
@@ -230,6 +235,13 @@ ws.addEventListener('open', function(e)
       {
         //console.log('#defi_' + msg['message1']+'_'+msg['message2']);
         endefi.removeChild(defi);
+      }
+      let testTable = document.querySelector('#listDefi');
+      let defii = document.querySelector('#defi_'+msg['message']);
+      if(testTable && defii)
+      {
+        //defi.innerHTML = '';
+        testTable.removeChild(defii);
       }
     }
   });

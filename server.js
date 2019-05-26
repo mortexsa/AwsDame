@@ -181,7 +181,8 @@ wsserver.on('connection', function(wsconn, req) {
         defiTermier(myuser.pseudo, recu['message']);
         userConnecter();
       }
-      else if(recu['type'] === 'deplacement') {
+      else if(recu['type'] === 'deplacement')
+      {
           console.log('joueur1 '+listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']]);
         if(listeDesUserConnecter[myuser.pseudo].jeux[recu['contre']])
         {
@@ -233,18 +234,27 @@ wsserver.on('connection', function(wsconn, req) {
         }
         userConnecter();
       }
+      else if(recu['type'] === 'deconnexion')
+      {
+        if(myuser != null)
+        {
+          delete listeDesUserConnecter[myuser.pseudo];
+        }
+        userConnecter();
+      }
       else
       {
         userConnecter();
       }
     });
-    // etc...
-    wsconn.on('close', function(window)
+    //
+    wsconn.on('close', function()
     {
       if(myuser != null)
-      {        
-        userConnecter();
+      {
+        //delete listeDesUserConnecter[myuser.pseudo];
       }
+      userConnecter();
     });
 
 });
@@ -344,6 +354,8 @@ var listeDesUserConnecter = {};
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
+
+//******************************************************** routes *****************************************************************
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -439,6 +451,7 @@ app.get('/profil', function(req, res) {
   }
   else{
     res.render('connexion.html');
+    //res.redirect('/');
   }
 });
 
@@ -616,11 +629,37 @@ app.post('/inscription', async function(req, res) {
 
 // on ajoute des routes vers l'url /jeu
 app.get('/jeu', function(req, res){
-  res.render('jeuTest.html', {moi: req.session.pseudo, contre:  req.params.user});
+  res.render('jeuClient.html', {moi: req.session.pseudo});
 });
 
+
+server.listen(process.env.PORT);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // on ajoute des routes vers l'url /index
-app.get('/index', async function(req, res){
+/*app.get('/index', async function(req, res){
   const db = client.db(dbName);
   let user = await db.collection('User');
   //user.find({$or: [{pseudo: 'testtest'}, {email: 'kiki@gmail.com'}]}).toArray(function(err, resultat){
@@ -633,14 +672,8 @@ app.get('/index', async function(req, res){
     }
   });
 });
+*/
 
-  
-  
-  
-//})
-
-
-server.listen(process.env.PORT);
 // listen for requests :)
 /*const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);

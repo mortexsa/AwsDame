@@ -217,8 +217,8 @@ ws.addEventListener('open', function(e, req)
       dame.echiquier = msg['echiquier'];
       dame.pionCliquer = msg['pionCliquer'];
       dame.render();
+      window.alert("Vous avez perdu :'(");
       window.close();
-      window.alert("Vous avez perdu :'("); 
       //console.log("voila zebi"+dame.gagnant); 
     }
     if(msg['type'] === 'quiter')

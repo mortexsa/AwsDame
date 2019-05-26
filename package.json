@@ -10,22 +10,20 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4",
-    "body-parser": "^1.19.0",
-    "express-session": "^1.16.1",
-    "nunjucks": "^3.2.0",
-    "cookie-parser": "^1.4.4",
-    "consolidate": "^0.15.1",
-    "mongodb": "^3.2.5",
-    "assert": "^2.0.0",
-    "express-async-errors": "^3.1.1",
+    "mongodb": "^3.2.6",
     "htmlspecialchars": "^1.0.5",
     "password-hash": "^1.2.2",
     "mongo-sanitize": "^1.0.1",
-    "react-dom": "^16.8.6",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "express-async-errors": "^3.1.1",
     "ws": "^7.0.0",
-    "socket.io": "^2.2.0",
-    "ws-session": "^1.0.13"
+    "consolidate": "^0.15.1",
+    "cookie-parser": "^1.4.4",
+    "nunjucks": "^3.2.0",
+    "body-parser": "^1.19.0",
+    "assert": "^2.0.0",
+    "react-dom": "^16.8.6"
   },
   "engines": {
     "node": "8.x"
