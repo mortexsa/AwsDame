@@ -106,6 +106,7 @@ ws.addEventListener('open', function(e)
                                       if(event.target.dataset.defi === 'defiRefuser')
                                       {
                                         let defi = null;
+                                        testTable = document.querySelector('#listDefi');
                                         defi = document.querySelector('#defi_'+msg['message']);
                                         if(defi)
                                         {

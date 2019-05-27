@@ -29,6 +29,70 @@ body {
 	box-shadow: 4px 4px 2px 0.5px rgba(0, 0, 0, .2);
 	margin-top: 65px;
 }
+
+#jouerAvec button{
+  background-color: white; 
+  color: black; 
+  border: 2px solid #f44336;
+}
+
+#jouerAvec button:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+#defi button {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #f44336;
+}
+
+#defi button:hover {
+ background-color: #f44336;
+  color: white;
+}
+
+#enDefi {
+  background-color:black;
+  color:white;
+  width:300px;
+  margin-top:40px;
+  border-radius:30px;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+}
+
+#defi {
+  background-color:black;
+  color:white;
+  width:300px;
+  border-radius:30px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#jouerAvec {
+  background-color:black;
+  color:white;
+  width:300px;
+  border-radius:30px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#listEnDefi {
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#listDefi {
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 .userConnecter td {
 	font-size: 1.1em;
 	padding: 8px;
