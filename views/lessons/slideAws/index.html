@@ -1,0 +1,392 @@
+<!DOCTYPE html><html><head lang="en">
+    <meta charset="utf-8">
+    <title>
+      
+      Slides Dames
+      
+    </title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    
+    <link rel="stylesheet" href="../../assets/css/font-awesome.css">
+    <link rel="stylesheet" href="../../assets/css/syntax.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link href="https://github.com/defeo/aws/commits/gh-pages.atom" rel="alternate" title="Recent Commits to aws" type="application/atom+xml">
+
+    <!-- Links (stylesheets, feeds, ...) added by add-ons -->
+    
+    <!-- Add-on: favicon -->
+    
+    
+    <link class="elements-addon-favicon" rel="shortcut icon" href="../../addons/favicon/favicon.png" type="image/png" title>
+    
+    <!-- Add-on: muut -->
+    
+    
+    <!-- Add-on: clicker -->
+    
+    
+    <link class="elements-addon-clicker" rel="stylesheet" href="../../addons/clicker/clicker.css" type="text/css" title>
+    
+    <!-- Add-on: slideshow -->
+    
+    
+    <link class="elements-addon-slideshow" rel="stylesheet" href="../../addons/slideshow/slides.css" type="text/css" title>
+    
+    <link class="elements-addon-slideshow" rel="stylesheet" href="../../addons/slideshow/slides-customization.css" type="text/css" title>
+    
+    <!-- Add-on: recorder -->
+    
+    
+    <!-- Add-on: style_goodies -->
+    
+    
+    <link class="elements-addon-style_goodies" rel="stylesheet" href="../../addons/style_goodies/goodies.css" type="text/css" title>
+    
+
+    
+    
+    <script src="../../assets/js/main.js"></script>
+  </head>
+  <body>
+
+    <nav id="topbar" class="toggleables">
+      <div id="logo"><a href="https://awsdame.glitch.me/">
+	Dames
+      </a></div>
+
+      <button class="toggle" data-target="#top-menu">
+	<i class="fa fa-bars"></i>
+      </button>
+      
+      <ul class="menu" id="top-menu">
+	<li><a href="https://github.com/mortexsa/slidesss/blob/master/aws/lessons/advanced-js/index.html" target="_blank">
+	    
+	    <span class="title">Source</span>
+	</a></li>
+        
+        <li><a href="https://github.com/defeo/aws/blob/gh-pages/index.md" target="_blank">
+	    
+          <span class="title">Credit</span></a></li>
+       <li><a href="/userConnecter" target="_blank">
+	    
+	    <span class="title">Retour</span>
+	</a></li>
+
+	<!-- Prose.io/GitHub integration -->
+	
+	
+
+	<!-- Menu entries added by add-ons -->
+	
+	<!-- Add-on: favicon -->
+	
+	
+	<!-- Add-on: muut -->
+	<li>
+	  
+	  <ul class="submenu">
+	  
+	    <li><a href="#/index.html">
+		
+		
+	    </a></li>
+	    
+	  </ul>
+	  
+	</li>
+	
+	<!-- Add-on: slideshow -->
+	
+	
+	<li class="elements-addon-slideshow">
+	  <a data-target="#top-menu .elements-addon-slideshow .submenu" data-group="#topbar .menu" href="javascript:SlideShow.play()/index.html">
+	    
+	    <span class="title">Start slideshow</span>
+	  </a>
+	  
+	</li>
+	
+	<!-- Add-on: recorder -->
+	
+	
+	<!-- Add-on: style_goodies -->
+	
+	
+	</ul>
+    </nav>
+    
+    <div class="main">
+      <div id="content" class="container">
+  <section class="title-slide">
+  <h1>Dames Deluxe <span class="subtitle">The best or nothing ;)</span></h1>
+  
+  <div id="slides-license" style="display: none">
+    <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/index.html">
+        <img alt="Creative Commons Licence" style="border-width:0; width:20px; height=20px;" src="https://cdn.glitch.com/92de824e-f10e-43a2-b6ef-2296b49d050c%2Fimage016.jpg?1558014603781" >
+      </a> <a href="https://github.com/defeo/aws/blob/gh-pages/index.md">Luca De Feo</a> / <a href="https://awsdame.glitch.me/">Slimani - Boudo</a>
+      2019,<br> Distribué avec une licence
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/index.html">CC-BY-SA
+        4.0</a><sup>*</sup>.</p>
+    
+    <p><small><sup>*</sup>Vous avez droit de reproduire, distribuer
+        et modifier à condition d'inclure un lien vers cette source,
+        et de partager sous les mêmes conditions.</small></p>
+  </div>
+</section>
+
+<section class="compact">
+
+  <h2 id="porte-de-this">Structure du <code class="highlighter-rouge">Code</code></h2>
+
+  <h3>Coté Client:</h3>
+  <h4>1. connextion.html</h4>
+  
+  <p>
+    Permet au client de ce connecter (<strong>session</strong>) après une batterie de tests au niveau du serveur :   
+  </p>
+  <ul>
+    <li>Test des champs <strong>email</strong> et <strong>password</strong> (non vide). </li>
+    <li><strong>Regex</strong> de vérification du format de l'email. </li>
+    <li>Verification de L'existance de l'<strong>Email</strong> dans la base de donnée.</li>
+    <li>Test d'égalité du mot de passe entré et de celui de la base de donnée (après <strong>Hash</strong>).</li>
+  </ul>
+  
+  <h4>2. inscription.html</h4>
+  <p>
+    Permet au client de s'inscrire au site, après inscription il sera renvoyer vers la page connexion, voici les test de sécurité:
+  </p>
+  <ul>
+    <li>On utilise <strong>htmlspecialchars</strong> sur tout les champs pour éviter les injections.</li>
+    <li>Test de la taille de tout les champs (<strong>pseudo</strong> et <strong>password</strong> doit etres compris en 6 et 25).</li>
+    <li><strong>Regex</strong> de vérification du format du pseudo et de l'email.</li>
+    <li>Test de l'existance du pseudo et de l'email dans la base de donnée.</li>
+    <li>Test d'égalité entre les deux mots de passe entrés.</li>
+  </ul>
+</section>
+<section class="compact">
+<h2>Structure du <code class="highlighter-rouge">Code</code></h2>
+  <h3>Coté Client:</h3>
+  <h4>3. liste.html</h4>
+  <p>
+    Permet d'affichier la liste des <strong>Utilisateurs</strong> connectés et de les défier, il permet aussi d'accepter les défis des autres membres (utilisations des websocket pour dialoguer).
+  </p>
+  <h4>4. profil.html</h4>
+  <p>
+    On peut y consulter notre profil : <strong>pseudo</strong>, <strong>email</strong>, <strong>nombres de défaites et de victoires</strong>.
+  </p>
+   <h4>5. changePassword.html</h4>
+  <p>
+    On peut changer son mot de passe utilisateur autant de fois qu'on le veut, à conditions d'inserer un nouveau mot de passe, (on reprend les meme test que dans inscription)
+  </p>
+  <h4>6. jeuClient.html</h4>
+  <p>
+    Permet de jouer contre un adversaire, Cette page gère uniquement l'affichage du jeu et les cliques des joueurs.
+  </p>
+</section>
+
+<section class="compact">
+  <h2>Structure du <code class="highlighter-rouge">Code</code></h2>
+  <h3>Coté Serveur:</h3>
+  <h4>1. User.js</h4>
+  <p>
+    La classe <strong>User</strong> représente un utilisateur connecter, une instance d'user est créer a chaque nouvelle connexion.
+  </p>
+  <h4>2. dames.js</h4>
+  <p>
+    La classe <strong>Dames</strong> représente le jeu de Dame: elle implemente les régles international du jeu de Dames.
+  </p>
+  <h4>3. db_init.js</h4>
+  <p>
+    Ici on initialise la base de donnée MongoDB.
+  </p>
+  <h4>4. serveur.js</h4>
+  <p>
+    Le <strong>serveur.js</strong> gére toute les requêtes get et post ainsi que les messages websocket et utilisateurs.
+  </p>
+  <h4>5. package.json</h4>
+  <p>
+    Ce fichier contient les différentes <code class="highlighter-rouge">configuration</code> du projet.
+  </p>
+</section>
+        
+<section class="compact">
+  <h2><code class="highlighter-rouge">Technologies</code> utilisées</h2> 
+  <h3><code class="highlighter-rouge">Front</code>-End</h3>
+  <ul>
+    <li>
+      <strong>HTML5</strong>
+    </li>
+    <li>
+      <strong>CSS3</strong> : responsive design, flexbox, media queries.
+    </li>
+    <li>
+      <strong>JAVASCRIPT</strong> : Affichage coté client.
+    </li>
+    <li>
+      <strong>NUNJUCKS</strong> : affiche les données envoyer par le serveur.
+    </li>
+  </ul>
+  <h3><code class="highlighter-rouge">Back</code>-End</h3>
+  <ul>
+    <li>
+      <strong>Node.JS</strong> : Serveur.
+    </li>
+    <li>
+      <strong>EXPRESS</strong> : Framework Node.js.
+    </li>
+    <li>
+      <strong>SESSION</strong> : Identifier un utilisateur.
+    </li>
+    <li>
+      <strong>WEBSOCKET</strong> : Dialogue client serveur.
+    </li>
+  </ul>
+  <h3><code class="highlighter-rouge">Base</code>-De-Donnée</h3>
+  <p>
+    <strong>MongoDB</strong>
+  </p>
+</section>
+
+<section class="compact">
+  <h2>Méthodologie de <code class="highlighter-rouge">Travail</code></h2>
+  <ul>
+    <li>
+      <p>
+        <strong>Travail en coordination sur le même projet glitch.</strong>
+      </p>
+    </li>
+    <li>
+      <p>
+        <strong>Une personne travail sur le front-end et une sur le back-end pour finir rapidement les parties concernées.</strong>
+      </p>
+    </li>
+    <li>
+      <p>
+        <strong>Une sauvegarde du projet est faite regulierement sur Github.</strong>
+      </p>
+    </li>
+    <li>
+      <p>
+        <strong>Une communication parfaite au sein du groupe pour que chacun de nous sois capable de faire fonctionner correctement des modules non achevés.</strong> 
+      </p>
+    </li>
+  </ul>
+</section>
+        
+<section id="exit-slide" style="display:none">
+  <h3 class="centered">Appuyer sur ECHAP pour sortir de la
+    présentation.</h3>
+</section>
+
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>Dames Deluxe | Tous droits réservés</p>
+  </div>
+</footer>
+
+    </div>
+
+    
+    
+
+    <!-- We pass down data from the YAML front matter as a JS object -->
+    <script id="elements-data-json" type="application/json">
+      {
+	"page": {
+	  "title": "JavaScript Avancé",
+	  "layout": "lesson",
+	  "dir": null,
+	  "name": null,
+	  "path": "_lessons/advanced-js.md",
+	  "url": "/lessons/advanced-js",
+	  "addons": {"favicon":true,"muut":true,"clicker":{"auths":[{"title":" Login ISTY","icon":"github","host":"https://keats.prism.uvsq.fr/aws","path":"/login/github"},{"title":" Login UVSQ","icon":"github","host":"https://keats.prism.uvsq.fr/aws-alt","path":"/login/github"}],"messages":{"loginError":"Veulliez vous connecter pour visualiser ce questionnaire.","unknownError":"Une erreur s'est produite, veuillez réessayer.","submitError":"Impossible d'envoyer le questionnaire, veuillez réessayer.","submit":"Envoyer réponse","submitted":"Réponse envoyée","deadline":"Vous pouvez modifier votre réponse jusqu'au"}},"slideshow":{"width":1000,"height":562.5},"recorder":true,"style_goodies":true}
+	}
+      }
+    </script>
+    <!-- Fix-me https://github.com/jekyll/jekyll/issues/5636
+      {
+        "page": {
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null,
+          
+          "": null
+          
+        }
+      }
+    </script-->
+    <script>var eLeMentS = JSON.parse($('#elements-data-json').textContent);</script>
+
+    <!-- Scripts added by add-ons -->
+    
+    <!-- Add-on: favicon -->
+    
+    
+    <!-- Add-on: muut -->
+    
+    
+    <script class="elements-addon-muut" src="../../addons/muut/muut.js" type="text/javascript" async></script>
+    
+    <!-- Add-on: clicker -->
+    
+    
+    <script class="elements-addon-clicker" src="../../addons/clicker/clicker.js" type="text/javascript"></script>
+    
+    <!-- Add-on: slideshow -->
+    
+    
+    <script class="elements-addon-slideshow" src="../../addons/slideshow/slides.js" type="text/javascript" async></script>
+    
+    <!-- Add-on: recorder -->
+    
+    
+    <script class="elements-addon-recorder" src="../../addons/recorder/recorder.js" type="text/javascript"></script>
+    
+    <!-- Add-on: style_goodies -->
+    
+    
+    <script class="elements-addon-style_goodies" src="../../addons/style_goodies/goodies.js" type="text/javascript" async></script>
+    
+    
+    
+  
+
+</body></html>
