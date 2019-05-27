@@ -161,6 +161,7 @@ ws.addEventListener('open', function(e)
         table.id = 'listEnDefi';
         table.addEventListener('click', function(event)
                                       {
+                                        console.log('quiter '+event.target.dataset.nomUser)
                                         ws.send(JSON.stringify({ type: 'quiter', message: event.target.dataset.nomUser}));//nom user
                                       });
 

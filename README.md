@@ -61,8 +61,6 @@ Le projet est structué en 3 parties:
    - `bd_init.js`: ce script est charger de l'initialisation de la base de donnée, tels que la creation des documents `MongoDB` (les tables en SQL), leurs initialisations par défaut. 
    - `server.js`: c'est dans ce script qu'est géré toutes les intéractions entre le client (utilisateur) et le serveur, la gestion des différentes `url`, le lancement de l'appication.
    - `package.json`: ce fichier contient les différentes configuration du projet.
-   - `public`: qui est un dossier
-     - `css`: l'esemble des css coté client
  
  
  

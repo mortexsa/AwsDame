@@ -464,15 +464,6 @@ app.get('/changePassword', function(req, res) {
     res.render('connexion.html');
   }
 });
-app.get('/apropos', function(req, res) {
-  if(req.session.pseudo)
-  {
-    res.render('lessons/slideAws/index.html', {pseudo: req.session.pseudo, profil: req.session});
-  }
-  else{
-    res.render('connexion.html');
-  }
-});
 
 
 app.post('/changePassword', async function(req, res) {

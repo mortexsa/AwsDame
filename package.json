@@ -22,8 +22,8 @@
     "cookie-parser": "^1.4.4",
     "nunjucks": "^3.2.0",
     "body-parser": "^1.19.0",
-    "assert": "^2.0.0",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "assert": "^2.0.0"
   },
   "engines": {
     "node": "8.x"
