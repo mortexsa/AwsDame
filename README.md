@@ -55,20 +55,25 @@ Le projet est structué en 3 parties:
  Contenant du projet
  -------------------
  
-   - `.env`: un fichier caché contenant les informations de connexion a la base de donnée
-   - `User.js`: un script permettant de créer une instance d'utilisatuer
+   - `.env`: un fichier caché contenant les informations de connexion a la base de donnée.
+   - `User.js`: un script permettant de créer une instance d'utilisatuer.
    - `dames.js`: l'implémentation de la logique du jeu. C'est ce script qui décide en fonction des informations transmisent par les utilisateurs en défi.
    - `bd_init.js`: ce script est charger de l'initialisation de la base de donnée, tels que la creation des documents `MongoDB` (les tables en SQL), leurs initialisations par défaut. 
    - `server.js`: c'est dans ce script qu'est géré toutes les intéractions entre le client (utilisateur) et le serveur, la gestion des différentes `url`, le lancement de l'appication.
    - `package.json`: ce fichier contient les différentes configuration du projet.
-   - `public`: qui est un dossier
-     - `css`: l'esemble des css coté client
+   - `public`: qui est un dossier.
+     - `css`: l'esemble des css utilisés coté client.
+     - `addons et asserts`: contiennent une presentation.
+     - `client.js`: un sript coté client (utilisateur) qui permet l'interaction avec le serveur.
+     - `dameClient.js`: il envoie les données de l'utilisateur au serveur pour l'annalyse de la partie du jeu en cours.
+   - `views`: ici l'ensemble des fichier html.
  
  
  
 Mode de lancement du jeu
 ------------------------
 
+Le projet étant développé et hebergé sur [Glitch](https://glitch.com/), alors il suffit tout simplement d'ouvrir un navigateur internet, saisie dans la barre d'adresse: [https://awsdame.glitch.me/](https://awsdame.glitch.me/)
 
 
 
@@ -81,7 +86,10 @@ Mode de lancement du jeu
 
 
 
-Made by [Glitch](https://glitch.com/)
--------------------
 
-\ ゜o゜)ノ
+
+
+Ce projet a été développé et hébergeé sur [Glitch](https://glitch.com/)  :)
+
+
+
